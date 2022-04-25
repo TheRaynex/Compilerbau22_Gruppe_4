@@ -1,16 +1,15 @@
+package StateMachines;
 
 import java.io.OutputStreamWriter;
 
-public class StateMachineDecimalsMain {
-
+public class StateMachineKeywordsMain {
 	public static void main(String[] args) throws Exception {
-		compiler.StateMachine decimalMachine = new StateMachineDecimals();
+		compiler.StateMachine keysMachine = new StateMachineKeywords("else");
 		OutputStreamWriter outStream = new OutputStreamWriter(System.out, "UTF-8");
-		decimalMachine.process("-417.18", outStream);
-
+		keysMachine.process("else", outStream);
+		
         System.out.println();
-        System.out.println(decimalMachine.asDot());
+        System.out.println(keysMachine.asDot());
 		System.out.println();
 	}
-
 }

@@ -1,5 +1,6 @@
+package StateMachines;
+
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 
 import compiler.StateMachine;
 

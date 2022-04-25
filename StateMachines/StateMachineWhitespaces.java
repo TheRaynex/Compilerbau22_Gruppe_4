@@ -1,3 +1,5 @@
+package StateMachines;
+
 import compiler.*;
 
 public class StateMachineWhitespaces extends StateMachine {

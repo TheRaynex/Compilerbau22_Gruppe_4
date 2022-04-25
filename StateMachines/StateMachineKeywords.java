@@ -1,3 +1,5 @@
+package StateMachines;
+
 import compiler.StateMachine;
 
 public class StateMachineKeywords extends StateMachine {

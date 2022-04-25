@@ -1,3 +1,5 @@
+package StateMachines;
+
 import java.io.OutputStreamWriter;
 
 public class StateMachineLineCommentMain {

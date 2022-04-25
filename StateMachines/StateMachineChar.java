@@ -1,3 +1,5 @@
+package StateMachines;
+
 import compiler.StateMachine;
 import compiler.State;
 
@@ -34,7 +36,7 @@ public class StateMachineChar extends StateMachine {
 	}
 
     public String getName() {
-        return "Decimals";
+        return "Char";
     }
 
 

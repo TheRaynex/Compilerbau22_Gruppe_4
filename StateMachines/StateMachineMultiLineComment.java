@@ -1,3 +1,5 @@
+package StateMachines;
+
 import compiler.State;
 
 /**

@@ -1,3 +1,4 @@
+package StateMachines;
 
 public class StateMachineTableStringLiteral extends compiler.StateMachine {
 	

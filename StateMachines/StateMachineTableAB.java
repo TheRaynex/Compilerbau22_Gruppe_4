@@ -1,3 +1,5 @@
+package StateMachines;
+
 /**
  * sample state machine
  * accept AB*
