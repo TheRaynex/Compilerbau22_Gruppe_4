@@ -1,0 +1,8 @@
+$IN
+abc
+$OUT
+abc
+$IN
+def
+$OUT
+xyz
