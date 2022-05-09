@@ -44,6 +44,9 @@ public class Lexer {
         }
     }
 
+    private int lineCounter = 0;
+    private int charInLine = 0;
+
     public Token nextWord() throws Exception {
         int curPos = 0;
         // initialize machines
@@ -81,6 +84,14 @@ public class Lexer {
         Token token = new Token();
         token.m_type = bestMatch.m_machine.getType();
         token.m_value = nextWord;
+
+        // determine line and char in line
+        charInLine += nextWord.length();
+        if (nextWord.contains("\n")) {
+            lineCounter += nextWord.split("\n").length;
+            charInLine = 0;
+        }
+
         return token;
     }
 
