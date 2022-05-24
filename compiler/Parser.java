@@ -1,6 +1,8 @@
 package compiler;
 import compiler.ast.*;
 
+import java.io.OutputStreamWriter;
+
 public class Parser {
     private Lexer m_lexer;
     private SymbolTable m_symbolTable;
@@ -29,13 +31,16 @@ public class Parser {
     }
     
     ASTExprNode getParantheseExpr() throws Exception {
+        ASTExprNode result = null;
         Token curToken = m_lexer.lookAhead();
-        if(curToken.m_type == Token.Type.INTEGER){
+        if (curToken.m_type.equals(Token.Type.LPAREN)) {
+            m_lexer.expect(Token.Type.LPAREN);
+            result = getExpr();
+            m_lexer.expect(Token.Type.RPAREN);
+            return new ASTParentheseExprNode(result);
+        } else {
             m_lexer.advance();
             return new ASTIntegerLiteralNode(curToken.m_value);
-        }
-        else {
-            return getVariableExpr();
         }
     }
     
@@ -149,6 +154,8 @@ public class Parser {
             return getAssignStmt();
         } else if (token.m_type == Token.Type.PRINT) {
             return getPrintStmt();
+        } else if (token.m_type == Token.Type.LBRACE) {
+            return getBlockStmt();
         }
         throw new Exception("Unexpected Statement");
     }
