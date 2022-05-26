@@ -5,11 +5,13 @@ import java.io.OutputStreamWriter;
 
 public class Parser {
     private Lexer m_lexer;
+    private CompileEnv m_compileEnv;
     private SymbolTable m_symbolTable;
     
-    public Parser(Lexer lexer) {
+    public Parser(CompileEnv compileEnv, Lexer lexer) {
+        m_compileEnv = compileEnv;
         m_lexer = lexer;
-        m_symbolTable = new SymbolTable();
+        m_symbolTable = m_compileEnv.getSymbolTable();
     }
     
     public SymbolTable getSymbolTable() {
