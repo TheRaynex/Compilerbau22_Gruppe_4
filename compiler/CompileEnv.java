@@ -32,7 +32,8 @@ public class CompileEnv implements CompileEnvIntf {
         m_entry = new InstrBlock("entry");
         m_blockList.add(m_entry);
         m_currentBlock = m_entry;
-        m_parser.getBlockStmt();
+        compiler.ast.ASTStmtNode root = m_parser.getBlockStmt();
+        root.codegen(this);
     }
 
     public void dump(OutputStream outStream) throws Exception {
