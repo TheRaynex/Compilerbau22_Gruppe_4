@@ -40,9 +40,11 @@ public class Parser {
             result = getExpr();
             m_lexer.expect(Token.Type.RPAREN);
             return new ASTParentheseExprNode(result);
-        } else {
+        } else if (curToken.m_type.equals(Token.Type.INTEGER)) {
             m_lexer.advance();
             return new ASTIntegerLiteralNode(curToken.m_value);
+        } else {
+            return getVariableExpr();
         }
     }
     
