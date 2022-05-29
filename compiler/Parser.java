@@ -191,7 +191,10 @@ public class Parser {
 
     // assignStmt: IDENTIFER ASSIGN expr SEMICOLON
     ASTStmtNode getAssignStmt() throws Exception {
-        return null;
+        m_lexer.expect(TokenIntf.Type.ASSIGN);
+        ASTExprNode node = getExpr();
+        m_lexer.expect(TokenIntf.Type.SEMICOLON);
+        return new ASTAssignStmtNode(node);
     }
 
     // printStmt: PRINT expr SEMICOLON
