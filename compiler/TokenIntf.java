@@ -37,6 +37,16 @@ public abstract class TokenIntf {
 		PRINT,
 		IF,
 		ELSE,
+		WHILE,
+		DO,
+		FOR,
+		SWITCH,
+		CASE,
+		EXECUTE,
+		TIMES,
+        FUNCTION,
+        CALL,
+        RETURN,
 	}
 
 	public Type m_type;

@@ -81,10 +81,22 @@ public class Lexer {
         addMachine(whitespaceMachine);
         addKeywordMachine(";", compiler.TokenIntf.Type.SEMICOLON);
         addKeywordMachine("=", compiler.TokenIntf.Type.ASSIGN);
+
         addKeywordMachine("DECLARE", compiler.TokenIntf.Type.DECLARE);
         addKeywordMachine("PRINT", compiler.TokenIntf.Type.PRINT);
-        addKeywordMachine("if", compiler.TokenIntf.Type.IF);
-        addKeywordMachine("else", compiler.TokenIntf.Type.ELSE);
+        addKeywordMachine("IF", compiler.TokenIntf.Type.IF);
+        addKeywordMachine("ELSE", compiler.TokenIntf.Type.ELSE);
+        addKeywordMachine("WHILE", compiler.TokenIntf.Type.WHILE);
+        addKeywordMachine("DO", compiler.TokenIntf.Type.DO);
+        addKeywordMachine("FOR", compiler.TokenIntf.Type.FOR);
+        addKeywordMachine("SWITCH", compiler.TokenIntf.Type.SWITCH);
+        addKeywordMachine("CASE", compiler.TokenIntf.Type.CASE);
+        addKeywordMachine("EXECUTE", compiler.TokenIntf.Type.EXECUTE);
+        addKeywordMachine("TIMES", compiler.TokenIntf.Type.TIMES);
+        addKeywordMachine("FUNCTION", compiler.TokenIntf.Type.FUNCTION);
+        addKeywordMachine("CALL", compiler.TokenIntf.Type.CALL);
+        addKeywordMachine("RETURN", compiler.TokenIntf.Type.RETURN);
+        
         compiler.StateMachineBase identifierMachine = new StateMachineIdentifier();
         addMachine(identifierMachine);
     }
