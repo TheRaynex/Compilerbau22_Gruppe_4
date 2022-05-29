@@ -61,7 +61,14 @@ public class Parser {
     }
     
     ASTExprNode getMulDivExpr() throws Exception {
-        return getUnaryExpr();
+        ASTExprNode result = getUnaryExpr();
+        Token nextToken = m_lexer.lookAhead();
+        while (nextToken.m_type == Token.Type.MUL || nextToken.m_type == Token.Type.DIV) {
+            m_lexer.advance();
+            result = new ASTMulDivExprNode(result, getUnaryExpr(), nextToken.m_type);
+            nextToken = m_lexer.lookAhead();
+        }
+        return result;
     }
     
     ASTExprNode getPlusMinusExpr() throws Exception {
