@@ -89,6 +89,8 @@ public class Lexer {
         addKeywordMachine("WHILE", compiler.TokenIntf.Type.WHILE);
         addKeywordMachine("DO", compiler.TokenIntf.Type.DO);
         addKeywordMachine("FOR", compiler.TokenIntf.Type.FOR);
+        addKeywordMachine("LOOP", compiler.TokenIntf.Type.LOOP);
+        addKeywordMachine("BREAK", compiler.TokenIntf.Type.BREAK);
         addKeywordMachine("SWITCH", compiler.TokenIntf.Type.SWITCH);
         addKeywordMachine("CASE", compiler.TokenIntf.Type.CASE);
         addKeywordMachine("EXECUTE", compiler.TokenIntf.Type.EXECUTE);
