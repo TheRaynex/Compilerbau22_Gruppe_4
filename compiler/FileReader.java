@@ -1,6 +1,8 @@
 package compiler;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class FileReader implements FileReaderIntf {
     private InputStream m_inputStream;
@@ -42,5 +44,11 @@ public class FileReader implements FileReaderIntf {
 		FileInputStream inputStream = new FileInputStream(fileName);
 		compiler.FileReaderIntf fileReader = new compiler.FileReader(inputStream);
 		return fileReader;
+	}
+	
+	public static String fileToString(String fileName) throws Exception {
+	    Path filePath = Path.of(fileName);
+	    String content = Files.readString(filePath);
+	    return content;
 	}
 }
