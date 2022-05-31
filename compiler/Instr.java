@@ -10,7 +10,6 @@ public abstract class Instr {
 
         public PrintInstr(InstrIntf expr) {
             m_expr = expr;
-            var x = 4 + "Hello";
         }
 
         public void execute(ExecutionEnvIntf env) {
@@ -43,7 +42,7 @@ public abstract class Instr {
         }
 
         public void trace(OutputStreamWriter os) throws Exception {
-            os.write("SUB\n");
+            os.write("ADD\n");
         }
     }
 

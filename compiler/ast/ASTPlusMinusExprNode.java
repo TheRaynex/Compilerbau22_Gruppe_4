@@ -34,5 +34,20 @@ public class ASTPlusMinusExprNode extends ASTExprNode {
             return m_lhs.eval() - m_rhs.eval();            
         }
     }
+    
+    @Override
+    public void codegen(compiler.CompileEnv env) {
+        m_lhs.codegen(env);
+        compiler.InstrIntf lhs = m_lhs.getInstr();
+        m_rhs.codegen(env);
+        compiler.InstrIntf rhs = m_rhs.getInstr();
+        if (m_type == compiler.Token.Type.PLUS) {
+            m_instr = new compiler.Instr.AddInstr(lhs, rhs);
+        } else {
+            m_instr = new compiler.Instr.SubInstr(lhs, rhs);            
+        }
+        env.addInstr(m_instr);
+    }
+   
 
 }

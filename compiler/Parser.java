@@ -191,10 +191,15 @@ public class Parser {
 
     // assignStmt: IDENTIFER ASSIGN expr SEMICOLON
     ASTStmtNode getAssignStmt() throws Exception {
+        Token nextToken = m_lexer.lookAhead();
+        if(m_symbolTable.getSymbol(nextToken.m_value) == null) {
+             throw new Exception("Die Variable \"" + nextToken.m_value + "\" ist noch nicht deklariert worden!\n");
+         }
+        m_lexer.expect(Token.Type.IDENT); 
         m_lexer.expect(TokenIntf.Type.ASSIGN);
-        ASTExprNode node = getExpr();
+        ASTStmtNode stmtNode = new ASTAssignStmtNode(getExpr(), m_symbolTable.getSymbol(nextToken.m_value));
         m_lexer.expect(TokenIntf.Type.SEMICOLON);
-        return new ASTAssignStmtNode(node);
+        return stmtNode;
     }
 
     // printStmt: PRINT expr SEMICOLON

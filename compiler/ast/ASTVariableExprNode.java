@@ -1,6 +1,5 @@
 package compiler.ast;
 
-import compiler.Symbol;
 import compiler.SymbolTable;
 
 import java.io.OutputStreamWriter;
@@ -13,7 +12,9 @@ public class ASTVariableExprNode extends ASTExprNode{
     @Override
     public void print(OutputStreamWriter outStream, String indent) throws Exception {
         outStream.write(indent);
+        outStream.write("VARIABLE ");
         outStream.write(this.identifier);
+        outStream.write("\n");
     }
 
     public ASTVariableExprNode(String identifier, SymbolTable symbolTable) {
