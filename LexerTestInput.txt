@@ -1,0 +1,10 @@
+$IN
+2
+$OUT
+INTEGER 2
+$IN
+ab & 14
+$OUT
+exception: "Illegal token
+at line 1
+ab "
