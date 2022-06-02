@@ -59,6 +59,18 @@ public class Parser {
         var parenExpr = getParantheseExpr();
         return new ASTUnaryExprNode(parenExpr, token);
     }
+
+    /*
+    Franziska Ommer, Leon Neumann, Dominik Ochs, Philipp Reichert
+
+    switchcase: SWITCH LPAREN expression RPAREN LBRACE caselist RBRACE
+    caselist: case caselist
+    caselist: eps
+    case: CASE literal COLON statementlist
+     */
+    ASTStmtNode getSwitchStmt() throws Exception {
+        throw new Exception("not implemented");
+    }
     
     ASTExprNode getMulDivExpr() throws Exception {
         ASTExprNode result = getUnaryExpr();
