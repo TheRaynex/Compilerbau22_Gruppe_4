@@ -1,7 +1,22 @@
 package compiler;
-import compiler.ast.*;
-
-import java.io.OutputStreamWriter;
+import compiler.ast.ASTAndOrExprNode;
+import compiler.ast.ASTAssignStmtNode;
+import compiler.ast.ASTBitAndOrExprNode;
+import compiler.ast.ASTBlockNode;
+import compiler.ast.ASTBlockStmtNode;
+import compiler.ast.ASTCompareExprNode;
+import compiler.ast.ASTDeclareNode;
+import compiler.ast.ASTExprNode;
+import compiler.ast.ASTIntegerLiteralNode;
+import compiler.ast.ASTMulDivExprNode;
+import compiler.ast.ASTParentheseExprNode;
+import compiler.ast.ASTPlusMinusExprNode;
+import compiler.ast.ASTPrintStmtNode;
+import compiler.ast.ASTQuestionmarkExprNode;
+import compiler.ast.ASTStmtNode;
+import compiler.ast.ASTUnaryExprNode;
+import compiler.ast.ASTVariableExprNode;
+import compiler.ast.ASTWhileStmtNode;
 
 public class Parser {
     private Lexer m_lexer;
@@ -230,7 +245,16 @@ public class Parser {
         throw new Exception("Unexpected Statement");
 
     }
-
+    
+  //while: WHILE LPAREN expression RPAREN blockstmt
+    ASTStmtNode getWhileStatement() throws Exception {
+    	 m_lexer.expect(TokenIntf.Type.WHILE);
+    	 m_lexer.expect(TokenIntf.Type.LPAREN);
+    	 var exprNode = getExpr();
+    	 m_lexer.expect(TokenIntf.Type.RPAREN);
+    	 var blockstmt = getBlockStmt();
+    	return new ASTWhileStmtNode(exprNode, blockstmt);
+    }
 
 
 }
