@@ -217,7 +217,7 @@ public abstract class Instr {
     	}
     	
     	public void execute(ExecutionEnvIntf env) {
-    		if(m_cond.getValue() ==1) {
+    		if(m_cond.getValue() != 0) {
     			m_value = m_targetTrue.getValue();
     		}else {	
     			m_value = m_targetFalse.getValue();
