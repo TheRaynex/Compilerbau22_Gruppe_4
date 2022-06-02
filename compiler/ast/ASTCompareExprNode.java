@@ -48,4 +48,33 @@ public class ASTCompareExprNode extends ASTExprNode {
                 return 0;
         }
     }
+    
+    @Override
+    public void codegen(compiler.CompileEnv env) {
+        // trigger codegen for all child nodes
+        m_lhs.codegen(env);
+        compiler.InstrIntf lhs = m_lhs.getInstr();
+        m_rhs.codegen(env);
+        compiler.InstrIntf rhs = m_rhs.getInstr();
+
+        // create instruction object
+        // pass instruction objects of childs  // as input arguments
+        switch(m_type){
+            case LESS:
+                // store instruction in this AST node
+                m_instr = new compiler.Instr.CompareLessInstr(lhs, rhs);
+                break;
+            case GREATER:
+                // store instruction in this AST node
+                m_instr = new compiler.Instr.CompareGreaterInstr(lhs, rhs);
+                break;
+            case EQUAL:
+                // store instruction in this AST node
+                m_instr = new compiler.Instr.CompareEqualInstr(lhs, rhs);
+                break;
+        }
+
+        // add instruction to current code block
+        env.addInstr(m_instr);
+    }
 }

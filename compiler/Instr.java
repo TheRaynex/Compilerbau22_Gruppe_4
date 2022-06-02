@@ -125,6 +125,59 @@ public abstract class Instr {
         }
     }
 
+    public static class CompareLessInstr extends InstrIntf {
+        private InstrIntf m_lhs;
+        private InstrIntf m_rhs;
+
+        public CompareLessInstr(InstrIntf lhs, InstrIntf rhs) {
+            m_lhs = lhs;
+            m_rhs = rhs;                   
+        }
+
+        public void execute(ExecutionEnvIntf env) {
+            m_value = (m_lhs.getValue() <  m_rhs.getValue()) ? 1 : 0;
+        }
+
+        public void trace(OutputStreamWriter os) throws Exception {
+            os.write("CMPLESS\n");
+        }
+    }
+    public static class CompareGreaterInstr extends InstrIntf {
+        private InstrIntf m_lhs;
+        private InstrIntf m_rhs;
+
+        public CompareGreaterInstr(InstrIntf lhs, InstrIntf rhs) {
+            m_lhs = lhs;
+            m_rhs = rhs;                   
+        }
+
+        public void execute(ExecutionEnvIntf env) {
+            m_value = (m_lhs.getValue() >  m_rhs.getValue()) ? 1 : 0;
+        }
+
+        public void trace(OutputStreamWriter os) throws Exception {
+            os.write("CMPGREATER\n");
+        }
+    }
+    public static class CompareEqualInstr extends InstrIntf {
+        private InstrIntf m_lhs;
+        private InstrIntf m_rhs;
+
+        public CompareEqualInstr(InstrIntf lhs, InstrIntf rhs) {
+            m_lhs = lhs;
+            m_rhs = rhs;                   
+        }
+
+        public void execute(ExecutionEnvIntf env) {
+            m_value = (m_lhs.getValue() ==  m_rhs.getValue()) ? 1 : 0;
+        }
+
+        public void trace(OutputStreamWriter os) throws Exception {
+            os.write("CMPEQUAL\n");
+        }
+    }
+
+
 
 
 

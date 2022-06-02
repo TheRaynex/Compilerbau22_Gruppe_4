@@ -106,7 +106,7 @@ public class Parser {
     ASTExprNode getCompareExpr() throws Exception {
         ASTExprNode result = getShiftExpr();
         Token nextToken = m_lexer.lookAhead();
-        while (nextToken.m_type == Token.Type.AND || nextToken.m_type == Token.Type.OR) {
+        while (nextToken.m_type == Token.Type.LESS || nextToken.m_type == Token.Type.EQUAL || nextToken.m_type == Token.Type.GREATER) {
             m_lexer.advance();
             result = new ASTCompareExprNode(result, getShiftExpr(), nextToken.m_type);
             nextToken = m_lexer.lookAhead();
