@@ -1,5 +1,6 @@
 package compiler.ast;
 
+import compiler.Instr;
 import compiler.SymbolTable;
 
 import java.io.OutputStreamWriter;
@@ -24,7 +25,15 @@ public class ASTVariableExprNode extends ASTExprNode{
 
     @Override
     public int eval() {
-
         return symbolTable.getSymbol(this.identifier).m_number;
+    }
+
+    @Override
+    public void codegen(compiler.CompileEnv env) {
+        // create instruction object
+        m_instr = new Instr.VarAccessInstr(identifier);
+
+        // add instruction to current code block
+        env.addInstr(m_instr);
     }
 }
