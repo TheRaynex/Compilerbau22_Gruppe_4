@@ -46,6 +46,42 @@ public abstract class Instr {
         }
     }
 
+    public static class BitAndInstr extends InstrIntf {
+        private InstrIntf m_lhs;
+        private InstrIntf m_rhs;
+
+        public BitAndInstr(InstrIntf lhs, InstrIntf rhs) {
+            m_lhs = lhs;
+            m_rhs = rhs;                   
+        }
+
+        public void execute(ExecutionEnvIntf env) {
+            m_value = m_lhs.getValue() & m_rhs.getValue();
+        }
+
+        public void trace(OutputStreamWriter os) throws Exception {
+            os.write("BITAND\n");
+        }
+    }
+
+    public static class BitOrInstr extends InstrIntf {
+        private InstrIntf m_lhs;
+        private InstrIntf m_rhs;
+
+        public BitOrInstr(InstrIntf lhs, InstrIntf rhs) {
+            m_lhs = lhs;
+            m_rhs = rhs;                   
+        }
+
+        public void execute(ExecutionEnvIntf env) {
+            m_value = m_lhs.getValue() | m_rhs.getValue();
+        }
+
+        public void trace(OutputStreamWriter os) throws Exception {
+            os.write("BITOR\n");
+        }
+    }
+
     public static class SubInstr extends InstrIntf {
         private InstrIntf m_lhs;
         private InstrIntf m_rhs;
