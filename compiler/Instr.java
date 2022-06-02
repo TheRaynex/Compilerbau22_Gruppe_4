@@ -77,6 +77,51 @@ public abstract class Instr {
         }
     }
 
+    public static class AndInstr extends InstrIntf {
+        private InstrIntf m_lhs;
+        private InstrIntf m_rhs;
+
+        public AndInstr(InstrIntf lhs, InstrIntf rhs) {
+            m_lhs = lhs;
+            m_rhs = rhs;
+        }
+
+        public void execute(ExecutionEnvIntf env) {
+            if(m_lhs.getValue() != 0 && m_rhs.getValue() != 0) {
+                m_value = 1;
+            } else {
+                m_value = 0;
+            }
+        }
+
+        public void trace(OutputStreamWriter os) throws Exception {
+            os.write("AND\n");
+        }
+    }
+
+    public static class OrInstr extends InstrIntf {
+        private InstrIntf m_lhs;
+        private InstrIntf m_rhs;
+
+        public OrInstr(InstrIntf lhs, InstrIntf rhs) {
+            m_lhs = lhs;
+            m_rhs = rhs;
+        }
+
+        public void execute(ExecutionEnvIntf env) {
+            if(m_lhs.getValue() != 0 || m_rhs.getValue() != 0) {
+                m_value = 1;
+            } else {
+                m_value = 0;
+            }
+        }
+
+        public void trace(OutputStreamWriter os) throws Exception {
+            os.write("OR\n");
+        }
+    }
+
+
 
     public static class JumpInstr extends InstrIntf {
         InstrBlock m_target;
