@@ -64,6 +64,20 @@ public abstract class Instr {
         }
     }
 
+    public static class IntegerLiteralInstr extends InstrIntf {
+        public IntegerLiteralInstr(int value) {
+            m_value = value;
+        }
+
+        public void execute(ExecutionEnvIntf env) {
+        }
+
+        public void trace(OutputStreamWriter os) throws Exception {
+            os.write("LITERAL\n");
+        }
+    }
+
+
     public static class JumpInstr extends InstrIntf {
         InstrBlock m_target;
 

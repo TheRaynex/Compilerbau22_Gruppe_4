@@ -22,4 +22,19 @@ public class ASTPrintStmtNode extends ASTStmtNode {
     public void execute() {
         System.out.println(node.eval());
     }
+
+    @Override
+    public void codegen(compiler.CompileEnv env) {
+        // trigger codegen for all child nodes
+        this.node.codegen(env);
+        compiler.InstrIntf instrToPrint = this.node.getInstr();
+
+        // create instruction object
+        // pass instruction objects of childs
+        // as input arguments
+        m_instr = new compiler.Instr.PrintInstr(instrToPrint);
+
+        // add instruction to current code block
+        env.addInstr(m_instr);
+    }
 }

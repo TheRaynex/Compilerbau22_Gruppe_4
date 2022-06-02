@@ -33,4 +33,10 @@ public class ASTBlockStmtNode extends ASTStmtNode {
     public void execute() {
         this.statements.forEach(node -> node.execute());
     }
+
+    @Override
+    public void codegen(compiler.CompileEnv env) {
+        // trigger codegen for all child nodes
+        this.statements.forEach(node -> node.codegen(env));
+    }
 }
