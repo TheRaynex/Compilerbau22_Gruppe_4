@@ -125,8 +125,37 @@ public abstract class Instr {
         }
     }
 
+    public static class NotInstr extends InstrIntf {
+        private final InstrIntf operand;
 
+        public NotInstr(InstrIntf operand) {
+            this.operand = operand;
+        }
 
+        public void execute(ExecutionEnvIntf env) {
+            m_value = operand.getValue() == 0 ? 1 : 0;
+        }
+
+        public void trace(OutputStreamWriter os) throws Exception {
+            os.write("NOT\n");
+        }
+    }
+
+    public static class MinusInstr extends InstrIntf {
+        private final InstrIntf operand;
+
+        public MinusInstr(InstrIntf operand) {
+            this.operand = operand;
+        }
+
+        public void execute(ExecutionEnvIntf env) {
+            m_value = -operand.getValue();
+        }
+
+        public void trace(OutputStreamWriter os) throws Exception {
+            os.write("MINUS\n");
+        }
+    }
 
 
 }

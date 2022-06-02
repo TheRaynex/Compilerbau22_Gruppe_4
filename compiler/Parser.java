@@ -54,11 +54,10 @@ public class Parser {
 
         if (token == TokenIntf.Type.MINUS || token == TokenIntf.Type.NOT) {
             m_lexer.advance();
-            var parenExpr = getParantheseExpr();
-            return new ASTUnaryExprNode(parenExpr, token);
-        } else {
-            return getParantheseExpr();
         }
+
+        var parenExpr = getParantheseExpr();
+        return new ASTUnaryExprNode(parenExpr, token);
     }
     
     ASTExprNode getMulDivExpr() throws Exception {
