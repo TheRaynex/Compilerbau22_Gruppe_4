@@ -205,6 +205,33 @@ public abstract class Instr {
             os.write("\n");
         }
     }
+    public static class QuestionMarkInstr extends InstrIntf {
+    	InstrIntf m_cond;
+    	InstrIntf m_targetTrue;
+    	InstrIntf m_targetFalse;
+    	
+    	public QuestionMarkInstr(InstrIntf cond, InstrIntf targetTrue, InstrIntf targetFalse) {
+    		m_cond = cond;
+    		m_targetTrue = targetTrue;
+    		m_targetFalse = targetFalse;
+    	}
+    	
+    	public void execute(ExecutionEnvIntf env) {
+    		if(m_cond.getValue() ==1) {
+    			m_value = m_targetTrue.getValue();
+    		}else {	
+    			m_value = m_targetFalse.getValue();
+    		}
+    	}
+    	
+    	public void trace(OutputStreamWriter os) throws Exception {
+    		os.write("QUESTIONMARK ");
+    		os.write(String.valueOf(m_targetTrue.getValue()));
+    		os.write(", ");
+    		os.write(String.valueOf(m_targetFalse.getValue()));
+    		os.write("\n");
+    	}
+    }
 
 
     public static class VarAccessInstr extends InstrIntf {
