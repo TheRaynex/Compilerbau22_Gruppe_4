@@ -151,6 +151,14 @@ public class Parser {
         return result;
     }
     
+    // block : BLOCK blockstmt
+    ASTStmtNode getBlock() throws Exception {
+        m_lexer.expect(Token.Type.BLOCK);
+        ASTStmtNode content = getBlockStmt();
+        ASTBlockNode result = new ASTBlockNode(content);
+        return result;
+    }
+    
     // stmt: declareStmt
     // stmt: assignStmt
     // stmt: printStmt
@@ -167,6 +175,8 @@ public class Parser {
             return getPrintStmt();
         } else if (token.m_type == Token.Type.LBRACE) {
             return getBlockStmt();
+        } else if (token.m_type == Token.Type.BLOCK) {
+            return getBlock();
         }
         throw new Exception("Unexpected Statement");
     }
