@@ -159,6 +159,13 @@ public class Parser {
         return result;
     }
     
+    //executeNTimes : EXECUTE expression TIMES block
+    ASTStmtNode getExecuteNTimes() throws Exception{
+    	m_lexer.expect(Token.Type.EXECUTE);
+    	ASTExprNode n = getExpr();
+    	ASTExecuteNTimesNode result = new ASTExecuteNTimesNode()
+    }
+    
     // stmt: declareStmt
     // stmt: assignStmt
     // stmt: printStmt
