@@ -99,7 +99,14 @@ public class Parser {
     }
 
     ASTExprNode getShiftExpr() throws Exception {
-        return getBitAndOrExpr();
+        ASTExprNode result = getBitAndOrExpr();
+        Token nextToken = m_lexer.lookAhead();
+        while(nextToken.m_type == Token.Type.SHIFTLEFT || nextToken.m_type == Token.Type.SHIFTRIGHT){
+            m_lexer.advance();
+            result = new ASTShiftExprNode(result, getBitAndOrExpr(), nextToken.m_type);
+            nextToken = m_lexer.lookAhead();
+        }
+        return result;
     }
 
     ASTExprNode getCompareExpr() throws Exception {
