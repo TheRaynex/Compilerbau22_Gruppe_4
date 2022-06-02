@@ -1,38 +1,44 @@
 package compiler.ast;
 
+import compiler.Token;
+
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 
-public class ASTMulDivExprNode extends ASTExprNode {
+public class ASTShiftExprNode extends ASTExprNode {
+    private ASTExprNode m_lhs;
+    private ASTExprNode m_rhs;
+    private compiler.Token.Type m_type;
 
-    public ASTExprNode m_lhs;
-    public ASTExprNode m_rhs;
-    public compiler.Token.Type m_type;
 
-    public ASTMulDivExprNode(ASTExprNode lhs, ASTExprNode rhs, compiler.TokenIntf.Type type) {
+    public ASTShiftExprNode(ASTExprNode lhs, ASTExprNode rhs, compiler.TokenIntf.Type type) {
         m_lhs = lhs;
         m_rhs = rhs;
         m_type = type;
     }
 
+
     @Override
     public void print(OutputStreamWriter outStream, String indent) throws Exception {
+        // TODO Auto-generated method stub
         outStream.write(indent);
-        if (m_type == compiler.Token.Type.MUL) {
-            outStream.write("MUL \n");
-        } else {
-            outStream.write("DIV \n");
+        if(m_type == Token.Type.SHIFTLEFT){
+            outStream.write("SHIFTLEFT \n");
+        }else{
+            outStream.write("SHIFTRIGHT \n");
         }
-        String childIndent = indent + "  ";
+        String childIndent = indent + " ";
         m_lhs.print(outStream, childIndent);
         m_rhs.print(outStream, childIndent);
     }
-
+    
+    
     @Override
     public int eval() {
-        if (m_type == compiler.Token.Type.MUL) {
-            return m_lhs.eval() * m_rhs.eval();
+        if(m_type == Token.Type.SHIFTLEFT){
+            return m_lhs.eval() << m_rhs.eval();
         } else {
-            return m_lhs.eval() / m_rhs.eval();
+            return m_lhs.eval() >> m_rhs.eval();            
         }
     }
 
@@ -46,15 +52,17 @@ public class ASTMulDivExprNode extends ASTExprNode {
 
         // create instruction object
         // pass instruction objects of childs  // as input arguments
-        if (m_type == compiler.Token.Type.MUL) {
+        if (m_type == compiler.Token.Type.SHIFTLEFT) {
             // store instruction in this AST node
-            m_instr = new compiler.Instr.MulInstr(lhs, rhs);
+            m_instr = new compiler.Instr.ShiftLeftInstr(lhs, rhs);
         } else {
             // store instruction in this AST node
-            m_instr = new compiler.Instr.DivInstr(lhs, rhs);            
+            m_instr = new compiler.Instr.ShiftRightInstr(lhs, rhs);            
         }
 
         // add instruction to current code block
         env.addInstr(m_instr);
     }
+
+    
 }
