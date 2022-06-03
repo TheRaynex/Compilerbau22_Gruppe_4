@@ -270,7 +270,7 @@ public class Parser {
         if (token.m_type == TokenIntf.Type.IF){
             return getIfStmt();
         } else {
-            return getBlockStmt();
+            return new ASTElseNode(getBlockStmt());
         }
     }
 }
