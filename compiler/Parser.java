@@ -184,6 +184,8 @@ public class Parser {
             return getBlockStmt();
         } else if (token.m_type == Token.Type.BLOCK) {
             return getBlock();
+        } else if (token.m_type == Token.Type.IF){
+            return getIfStmt();
         }
         throw new Exception("Unexpected Statement");
     }
@@ -239,10 +241,11 @@ public class Parser {
     }
 
     //ifstmt: IF LPAREN condition RPAREN blockstmt elsestmthead
+    //condition: expr
     ASTStmtNode getIfStmt() throws Exception {
         m_lexer.expect(TokenIntf.Type.IF);
         m_lexer.expect(TokenIntf.Type.LPAREN);
-        ASTExprNode condition = getConditionNode();
+        ASTExprNode condition = getExpr();
         m_lexer.expect(TokenIntf.Type.RPAREN);
         ASTStmtNode blockstmt = getBlockStmt();
         ASTStmtNode elseblock = getElseStmtHead();
@@ -268,16 +271,6 @@ public class Parser {
             return getIfStmt();
         } else {
             return getBlockStmt();
-        }
-    }
-
-    ASTExprNode getConditionNode() throws Exception {
-        Token token = m_lexer.lookAhead();
-        if (getSymbolTable().getSymbol(token.m_value) != null) {
-            m_lexer.advance();
-            return new ASTConditionNode(token.m_value, getSymbolTable());
-        }else{
-            throw new Exception("Die Variable \"" + token.m_value + "\" ist noch nicht deklariert worden!\n");
         }
     }
 }

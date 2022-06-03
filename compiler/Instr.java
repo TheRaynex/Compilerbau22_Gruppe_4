@@ -13,7 +13,7 @@ public abstract class Instr {
         }
 
         public void execute(ExecutionEnvIntf env) {
-            int expr = m_expr.getValue(); 
+            int expr = m_expr.getValue();
             try {
                 env.getOutputStream().write(Integer.toString(expr));
                 env.getOutputStream().write('\n');
@@ -34,7 +34,7 @@ public abstract class Instr {
 
         public AddInstr(InstrIntf lhs, InstrIntf rhs) {
             m_lhs = lhs;
-            m_rhs = rhs;                   
+            m_rhs = rhs;
         }
 
         public void execute(ExecutionEnvIntf env) {
@@ -52,7 +52,7 @@ public abstract class Instr {
 
         public BitAndInstr(InstrIntf lhs, InstrIntf rhs) {
             m_lhs = lhs;
-            m_rhs = rhs;                   
+            m_rhs = rhs;
         }
 
         public void execute(ExecutionEnvIntf env) {
@@ -70,7 +70,7 @@ public abstract class Instr {
 
         public BitOrInstr(InstrIntf lhs, InstrIntf rhs) {
             m_lhs = lhs;
-            m_rhs = rhs;                   
+            m_rhs = rhs;
         }
 
         public void execute(ExecutionEnvIntf env) {
@@ -88,7 +88,7 @@ public abstract class Instr {
 
         public SubInstr(InstrIntf lhs, InstrIntf rhs) {
             m_lhs = lhs;
-            m_rhs = rhs;                   
+            m_rhs = rhs;
         }
 
         public void execute(ExecutionEnvIntf env) {
@@ -206,31 +206,31 @@ public abstract class Instr {
         }
     }
     public static class QuestionMarkInstr extends InstrIntf {
-    	InstrIntf m_cond;
-    	InstrIntf m_targetTrue;
-    	InstrIntf m_targetFalse;
-    	
-    	public QuestionMarkInstr(InstrIntf cond, InstrIntf targetTrue, InstrIntf targetFalse) {
-    		m_cond = cond;
-    		m_targetTrue = targetTrue;
-    		m_targetFalse = targetFalse;
-    	}
-    	
-    	public void execute(ExecutionEnvIntf env) {
-    		if(m_cond.getValue() != 0) {
-    			m_value = m_targetTrue.getValue();
-    		}else {	
-    			m_value = m_targetFalse.getValue();
-    		}
-    	}
-    	
-    	public void trace(OutputStreamWriter os) throws Exception {
-    		os.write("QUESTIONMARK ");
-    		os.write(String.valueOf(m_targetTrue.getValue()));
-    		os.write(", ");
-    		os.write(String.valueOf(m_targetFalse.getValue()));
-    		os.write("\n");
-    	}
+        InstrIntf m_cond;
+        InstrIntf m_targetTrue;
+        InstrIntf m_targetFalse;
+
+        public QuestionMarkInstr(InstrIntf cond, InstrIntf targetTrue, InstrIntf targetFalse) {
+            m_cond = cond;
+            m_targetTrue = targetTrue;
+            m_targetFalse = targetFalse;
+        }
+
+        public void execute(ExecutionEnvIntf env) {
+            if(m_cond.getValue() != 0) {
+                m_value = m_targetTrue.getValue();
+            }else {
+                m_value = m_targetFalse.getValue();
+            }
+        }
+
+        public void trace(OutputStreamWriter os) throws Exception {
+            os.write("QUESTIONMARK ");
+            os.write(String.valueOf(m_targetTrue.getValue()));
+            os.write(", ");
+            os.write(String.valueOf(m_targetFalse.getValue()));
+            os.write("\n");
+        }
     }
 
     public static class CompareLessInstr extends InstrIntf {
@@ -239,7 +239,7 @@ public abstract class Instr {
 
         public CompareLessInstr(InstrIntf lhs, InstrIntf rhs) {
             m_lhs = lhs;
-            m_rhs = rhs;                   
+            m_rhs = rhs;
         }
 
         public void execute(ExecutionEnvIntf env) {
@@ -256,7 +256,7 @@ public abstract class Instr {
 
         public CompareGreaterInstr(InstrIntf lhs, InstrIntf rhs) {
             m_lhs = lhs;
-            m_rhs = rhs;                   
+            m_rhs = rhs;
         }
 
         public void execute(ExecutionEnvIntf env) {
@@ -273,7 +273,7 @@ public abstract class Instr {
 
         public CompareEqualInstr(InstrIntf lhs, InstrIntf rhs) {
             m_lhs = lhs;
-            m_rhs = rhs;                   
+            m_rhs = rhs;
         }
 
         public void execute(ExecutionEnvIntf env) {
@@ -394,7 +394,7 @@ public abstract class Instr {
 
         public ShiftLeftInstr(InstrIntf lhs, InstrIntf rhs) {
             m_lhs = lhs;
-            m_rhs = rhs;                   
+            m_rhs = rhs;
         }
 
         public void execute(ExecutionEnvIntf env) {
@@ -412,7 +412,7 @@ public abstract class Instr {
 
         public ShiftRightInstr(InstrIntf lhs, InstrIntf rhs) {
             m_lhs = lhs;
-            m_rhs = rhs;                   
+            m_rhs = rhs;
         }
 
         public void execute(ExecutionEnvIntf env) {
@@ -421,24 +421,6 @@ public abstract class Instr {
 
         public void trace(OutputStreamWriter os) throws Exception {
             os.write("SHIFTRIGHT\n");
-        }
-    }
-
-    public static class ConditionInstr extends InstrIntf {
-        private String m_identifier;
-
-        public ConditionInstr(String identifier) {
-            this.m_identifier = identifier;
-        }
-
-        @Override
-        public void execute(ExecutionEnvIntf env) {
-            m_value = env.getSymbol(m_identifier).m_number;
-        }
-
-        @Override
-        public void trace(OutputStreamWriter os) throws Exception {
-            os.write("CONDITION\n");
         }
     }
 }
