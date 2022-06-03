@@ -1,5 +1,7 @@
 package compiler.ast;
 
+import compiler.InstrBlock;
+
 import java.io.OutputStreamWriter;
 import java.util.List;
 
@@ -36,28 +38,26 @@ public class ASTFuncDefStmtNode extends ASTStmtNode {
 
     @Override
     public void codegen(compiler.CompileEnv env) {
-        // Code blocks needed for control structures
-        compiler.InstrBlock body = env.createBlock("function_body_" + m_index);
-        compiler.InstrBlock exit = env.createBlock("function_exit_" + m_index);
-        m_index++;
+        // Store current block, so that statements following
+        // the declaration can be assigned to it. The function
+        // declaration is disconnected from the current block,
+        // as it is just a block definition that is entered using
+        // a call.
+        InstrBlock current = env.getCurrentBlock();
         
-        // Assign body entry to function info
+        // Create function body block and assign to function info
+        compiler.InstrBlock body = env.createBlock("function_" + m_index);
         env.getFunctionTable().getFunction(m_identifier).setEntry(body);
+        m_index++;
 
-        // for each block of control structure
-        // switch CompileEnv to the corresponding block
-        // without jumping into it, because it is just
-        // a definition
+        // Set function body as current block and assign
+        // statements inside body to that block
         env.setCurrentBlock(body);
-        // trigger codegen of statements that
-        // belong into this block
         m_body.codegen(env);
-        // terminate current block with jump
-        compiler.InstrIntf jmpToExit = new compiler.Instr.JumpInstr(exit);
-        env.addInstr(jmpToExit);
-
-        // switch CompileEnv to exit block
-        env.setCurrentBlock(exit);
+        
+        // Set old context again since function declaration is done
+        // and code following shall be assigned to old context
+        env.setCurrentBlock(current);
     }
 
 }
