@@ -4,17 +4,20 @@ import compiler.ast.*;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class Parser {
     private Lexer m_lexer;
     private CompileEnv m_compileEnv;
     private SymbolTable m_symbolTable;
+    private FunctionTable m_funcTable;
 
     public Parser(CompileEnv compileEnv, Lexer lexer) {
         m_compileEnv = compileEnv;
         m_lexer = lexer;
         m_symbolTable = m_compileEnv.getSymbolTable();
+        m_funcTable = m_compileEnv.getFunctionTable();
     }
 
     public SymbolTable getSymbolTable() {
@@ -128,7 +131,6 @@ public class Parser {
     }
 
     ASTExprNode getQuestionMarkExpr() throws Exception {
-
         ASTExprNode toResolve = getAndOrExpr();
         while (m_lexer.lookAhead().m_type == Token.Type.QUESTIONMARK) {
           m_lexer.expect(Token.Type.QUESTIONMARK);
@@ -229,27 +231,43 @@ public class Parser {
 
     // func: FUNCTION IDENTIFIER LPAREN paramList RPAREN blockstmt
     ASTStmtNode getFuncDefStmt() throws Exception {
+        // Read function signature
         m_lexer.expect(Token.Type.FUNCTION);
-        Token name = m_lexer.lookAhead();
+        
+        // Fetch function identifier
+        Token identifierToken = m_lexer.lookAhead();
+        String identifier = identifierToken.m_value;
+        if (identifierToken.m_type != Token.Type.IDENT) {
+            throw new Exception(String.format("Lexeme \"%s\" is not an identifier.", identifier));
+        }
         m_lexer.advance();
+        
+        // Check if function already defined
+        if (m_funcTable.getFunction(identifier) != null) {
+            throw new Exception(String.format("Function \"%s\" already defined.", identifier));
+        }
+        
+        // Read rest of function signature
         m_lexer.expect(Token.Type.LPAREN);
-        List<ASTVariableExprNode> paramNodes = getFuncParamList();
-        List<Symbol> paramSymbols = paramNodes.stream().map(param -> m_symbolTable.getSymbol(param.identifier)).collect(
-            Collectors.toList());
+        
+        // Read parameter list
+        List<String> params = getFuncParamList();
         m_lexer.expect(Token.Type.RPAREN);
 
-        // read function body
+        // make entry in function table
+        m_funcTable.createFunction(identifier, params);
+        
+        // Read function body
         ASTBlockStmtNode blockStmtExpr = (ASTBlockStmtNode) getBlockStmt();
-
-        return new ASTFuncDefStmtNode(name.m_value, paramSymbols, blockStmtExpr);
+        return new ASTFuncDefStmtNode(identifier, params, blockStmtExpr);
     }
 
     // paramList: EPSILON
     // paramList: IDENTIFIER moreParams
     // moreParams: COMMA IDENTIFIER moreParams
     // moreParams: EPSILON
-    private List<ASTVariableExprNode> getFuncParamList() throws Exception {
-        List<ASTVariableExprNode> result = new ArrayList<>();
+    private List<String> getFuncParamList() throws Exception {
+        List<String> result = new ArrayList<>();
 
         Token.Type prevType = Token.Type.COMMA;
         while (m_lexer.lookAhead().m_type != Token.Type.RPAREN) {
@@ -260,8 +278,9 @@ public class Parser {
                 }
 
                 ASTVariableExprNode paramNode = (ASTVariableExprNode) getVariableExpr();
-                m_symbolTable.createSymbol(paramNode.identifier);
-                result.add(paramNode);
+                String identifier = paramNode.identifier;
+                m_symbolTable.createSymbol(identifier);
+                result.add(identifier);
             } else if(token.m_type == Token.Type.COMMA) {
                 if(prevType != Token.Type.IDENT) {
                     throw new Exception("Unexpected comma");
@@ -275,6 +294,5 @@ public class Parser {
 
         return result;
     }
-
 
 }
