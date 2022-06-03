@@ -261,8 +261,34 @@ public class Parser {
         m_lexer.expect(Token.Type.SEMICOLON);
         return new ASTReturnStmtNode(result);
     }
-
-    // func: FUNCTION IDENTIFIER LPAREN paramList RPAREN blockstmt
+    
+    ASTBlockStmtNode getFuncBody(String identifier) throws Exception {
+        ASTBlockStmtNode body = (ASTBlockStmtNode) getBlockStmt();
+        List<ASTStmtNode> statements = body.m_statements;
+        int size = statements.size();
+        
+        for (int i = 0; i < size; i++) {
+            if (i < size - 1) {
+                // Statement is return but not at end of block
+                if (statements.get(i) instanceof ASTReturnStmtNode) {
+                    throw new Exception(
+                            String.format(
+                                    "Dead code due to premature return in function \"%s\".", identifier));
+                }
+            } else if (i == size - 1){
+                // Last statement is also not a return statement
+                if (!(statements.get(i) instanceof ASTReturnStmtNode)) {
+                    throw new Exception(
+                            String.format(
+                                    "Return statement missing in function \"%s\".", identifier));
+                }
+            }
+        }
+        
+        return body;
+    }
+    
+    // func: FUNCTION IDENTIFIER LPAREN paramList RPAREN funcBody
     ASTStmtNode getFuncDefStmt() throws Exception {
         // Read function signature
         m_lexer.expect(Token.Type.FUNCTION);
@@ -291,7 +317,7 @@ public class Parser {
         m_funcTable.createFunction(identifier, params);
         
         // Read function body
-        ASTBlockStmtNode blockStmtExpr = (ASTBlockStmtNode) getBlockStmt();
+        ASTBlockStmtNode blockStmtExpr = getFuncBody(identifier);
         return new ASTFuncDefStmtNode(identifier, params, blockStmtExpr);
     }
 
