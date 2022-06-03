@@ -238,6 +238,46 @@ public class Parser {
 
     }
 
+    //ifstmt: IF LPAREN condition RPAREN blockstmt elsestmthead
+    ASTStmtNode getIfStmt() throws Exception {
+        m_lexer.expect(TokenIntf.Type.IF);
+        m_lexer.expect(TokenIntf.Type.LPAREN);
+        ASTExprNode condition = getConditionNode();
+        m_lexer.expect(TokenIntf.Type.RPAREN);
+        ASTStmtNode blockstmt = getBlockStmt();
+        ASTStmtNode elseblock = getElseStmtHead();
+        return new ASTIfNode(condition, blockstmt, elseblock);
+    }
 
+    //elsestmthead: ELSE elsebody | EPSILON
+    ASTStmtNode getElseStmtHead() throws Exception {
+        Token token = m_lexer.lookAhead();
+        ASTStmtNode result = null;
+        if (token.m_type == TokenIntf.Type.ELSE) {
+            m_lexer.advance();
+            result = getElseBody();
+        }
+        return result;
+    }
 
+    //elsebody: ifstmt
+    //elsebody: blockstmt
+    ASTStmtNode getElseBody() throws Exception {
+        Token token = m_lexer.lookAhead();
+        if (token.m_type == TokenIntf.Type.IF){
+            return getIfStmt();
+        } else {
+            return getBlockStmt();
+        }
+    }
+
+    ASTExprNode getConditionNode() throws Exception {
+        Token token = m_lexer.lookAhead();
+        if (getSymbolTable().getSymbol(token.m_value) != null) {
+            m_lexer.advance();
+            return new ASTConditionNode(token.m_value, getSymbolTable());
+        }else{
+            throw new Exception("Die Variable \"" + token.m_value + "\" ist noch nicht deklariert worden!\n");
+        }
+    }
 }
