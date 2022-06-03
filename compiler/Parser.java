@@ -197,8 +197,10 @@ public class Parser {
             return getPrintStmt();
         } else if (token.m_type == Token.Type.LBRACE) {
             return getBlockStmt();
-        } else if(token.m_type == Token.Type.FUNCTION) {
-          return getFuncDefStmt();
+        } else if (token.m_type == Token.Type.FUNCTION) {
+            return getFuncDefStmt();
+        } else if (token.m_type == Token.Type.RETURN) {
+            return getReturnStmt();
         }
         throw new Exception("Unexpected Statement");
     }
@@ -251,6 +253,13 @@ public class Parser {
         }
         throw new Exception("Unexpected Statement");
 
+    }
+    
+    ASTStmtNode getReturnStmt() throws Exception {
+        m_lexer.expect(Token.Type.RETURN);
+        ASTExprNode result = getExpr();
+        m_lexer.expect(Token.Type.SEMICOLON);
+        return new ASTReturnStmtNode(result);
     }
 
     // func: FUNCTION IDENTIFIER LPAREN paramList RPAREN blockstmt

@@ -40,12 +40,32 @@ public abstract class Instr {
         }
 
         public void execute(ExecutionEnvIntf env) {
-            // TODO: Put the variables on the stack
-            //       and make a call from there
+            // TODO: Put return address on stack
+            // TODO: Put variables on stack
+            // TODO: Jump to function behind m_identifier
         }
 
         public void trace(OutputStreamWriter os) throws Exception {
             os.write(String.format("CALL %s\n", m_identifier));
+        }
+    }
+    
+    public static class ReturnInstr extends InstrIntf {
+
+        private InstrIntf m_result;
+        
+        public ReturnInstr(InstrIntf result) {
+            m_result = result;
+        }
+
+        public void execute(ExecutionEnvIntf env) {
+            int value = m_result.getValue();
+            // TODO: Pop all variables from stack
+            // TODO: Take reference back to calling function
+        }
+
+        public void trace(OutputStreamWriter os) throws Exception {
+            os.write("RETURN\n");
         }
     }
 
@@ -305,8 +325,6 @@ public abstract class Instr {
             os.write("CMPEQUAL\n");
         }
     }
-
-
 
     public static class VarAccessInstr extends InstrIntf {
         private String m_identifier;
