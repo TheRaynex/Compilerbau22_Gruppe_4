@@ -423,4 +423,22 @@ public abstract class Instr {
             os.write("SHIFTRIGHT\n");
         }
     }
+
+    public static class ConditionInstr extends InstrIntf {
+        private String m_identifier;
+
+        public ConditionInstr(String identifier) {
+            this.m_identifier = identifier;
+        }
+
+        @Override
+        public void execute(ExecutionEnvIntf env) {
+            m_value = env.getSymbol(m_identifier).m_number;
+        }
+
+        @Override
+        public void trace(OutputStreamWriter os) throws Exception {
+            os.write("CONDITION\n");
+        }
+    }
 }

@@ -36,7 +36,7 @@ public class ASTConditionNode extends ASTExprNode {
     @Override
     public void codegen(compiler.CompileEnv env) {
         // create instruction object
-        m_instr = new Instr.VarAccessInstr(identifier);
+        m_instr = new Instr.ConditionInstr(identifier);
 
         // add instruction to current code block
         env.addInstr(m_instr);
