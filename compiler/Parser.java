@@ -35,7 +35,7 @@ public class Parser {
     }
 
     ASTExprNode getExpr() throws Exception {
-        return getQuestionMarkExpr();
+        return getFuncCallExpr();
     }
 
     ASTExprNode getParantheseExpr() throws Exception {
@@ -141,6 +141,31 @@ public class Parser {
         }
         return toResolve;
     }
+    
+    ASTExprNode getFuncCallExpr() throws Exception {
+        Token keywordToken = m_lexer.lookAhead();
+        if (keywordToken.m_type != Token.Type.CALL) {
+            return getQuestionMarkExpr();
+        }
+        
+        // Skip CALL keyword
+        m_lexer.advance();
+        
+        // Check if next token is identifier
+        Token identifierToken = m_lexer.lookAhead();
+        String identifier = identifierToken.m_value;
+        if (identifierToken.m_type != Token.Type.IDENT) {
+            throw new Exception(String.format("Lexeme \"%s\" is not an identifier.", identifier));
+        }
+        m_lexer.advance();
+        
+        // Read argument list
+        m_lexer.expect(Token.Type.LPAREN);
+        List<ASTExprNode> params = getArgList();
+        m_lexer.expect(Token.Type.RPAREN);
+        
+        return new ASTFuncCallExprNode(identifier, params);
+    }
 
     // blockstmt: LBRACE stmtlist RBRACE
     // stmtlist: stmt stmtlist
@@ -228,7 +253,6 @@ public class Parser {
 
     }
 
-
     // func: FUNCTION IDENTIFIER LPAREN paramList RPAREN blockstmt
     ASTStmtNode getFuncDefStmt() throws Exception {
         // Read function signature
@@ -251,7 +275,7 @@ public class Parser {
         m_lexer.expect(Token.Type.LPAREN);
         
         // Read parameter list
-        List<String> params = getFuncParamList();
+        List<String> params = getParamList();
         m_lexer.expect(Token.Type.RPAREN);
 
         // make entry in function table
@@ -262,34 +286,69 @@ public class Parser {
         return new ASTFuncDefStmtNode(identifier, params, blockStmtExpr);
     }
 
+    // argList: EPSILON
+    // argList: expr moreArgs
+    // moreArgs: COMMA expr moreArgs
+    // moreArgs: EPSILON
+    private List<ASTExprNode> getArgList() throws Exception {
+        List<ASTExprNode> result = new ArrayList<>();
+
+        boolean expectingExpr = true;
+        while (m_lexer.lookAhead().m_type != Token.Type.RPAREN) {
+            if (expectingExpr) {
+                result.add(getExpr());
+            } else {
+                m_lexer.expect(Token.Type.COMMA);
+            }
+            
+            // Toggle expectation
+            expectingExpr = !expectingExpr;
+        }
+
+        return result;
+    }
+    
     // paramList: EPSILON
     // paramList: IDENTIFIER moreParams
     // moreParams: COMMA IDENTIFIER moreParams
     // moreParams: EPSILON
-    private List<String> getFuncParamList() throws Exception {
+    private List<String> getParamList() throws Exception {
         List<String> result = new ArrayList<>();
-
-        Token.Type prevType = Token.Type.COMMA;
+        
+        boolean expectingIdent = true;
         while (m_lexer.lookAhead().m_type != Token.Type.RPAREN) {
-            Token token = m_lexer.lookAhead();
-            if(token.m_type == Token.Type.IDENT) {
-                if(prevType != Token.Type.COMMA) {
-                    throw new Exception("Unexpected identifier");
-                }
-
-                ASTVariableExprNode paramNode = (ASTVariableExprNode) getVariableExpr();
-                String identifier = paramNode.identifier;
+            if (expectingIdent) {
+                ASTVariableExprNode variableNode = (ASTVariableExprNode) getVariableExpr();
+                String identifier = variableNode.identifier;
                 m_symbolTable.createSymbol(identifier);
                 result.add(identifier);
-            } else if(token.m_type == Token.Type.COMMA) {
-                if(prevType != Token.Type.IDENT) {
-                    throw new Exception("Unexpected comma");
-                }
-
-                m_lexer.advance();
+            } else {
+                m_lexer.expect(Token.Type.COMMA);
             }
-
-            prevType = token.m_type;
+            
+            // Toggle expectation
+            expectingIdent = !expectingIdent;
+//
+//
+//            Token token = m_lexer.lookAhead();
+//            if(token.m_type == Token.Type.IDENT) {
+//                if(prevType != Token.Type.COMMA) {
+//                    throw new Exception("Unexpected identifier");
+//                }
+//
+//                ASTVariableExprNode paramNode = (ASTVariableExprNode) getVariableExpr();
+//                String identifier = paramNode.identifier;
+//                m_symbolTable.createSymbol(identifier);
+//                result.add(identifier);
+//            } else if(token.m_type == Token.Type.COMMA) {
+//                if(prevType != Token.Type.IDENT) {
+//                    throw new Exception("Unexpected comma");
+//                }
+//
+//                m_lexer.advance();
+//            }
+//
+//            prevType = token.m_type;
         }
 
         return result;

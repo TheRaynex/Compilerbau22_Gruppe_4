@@ -2,6 +2,7 @@ package compiler;
 
 import compiler.ast.ASTExprNode;
 import java.io.OutputStreamWriter;
+import java.util.List;
 
 public abstract class Instr {
 
@@ -25,6 +26,26 @@ public abstract class Instr {
 
         public void trace(OutputStreamWriter os) throws Exception {
             os.write("PRINT\n");
+        }
+    }
+    
+    public static class CallInstr extends InstrIntf {
+
+        private String m_identifier;
+        private List<InstrIntf> m_args;
+
+        public CallInstr(String identifier, List<InstrIntf> args) {
+            m_identifier = identifier;
+            m_args = args;
+        }
+
+        public void execute(ExecutionEnvIntf env) {
+            // TODO: Put the variables on the stack
+            //       and make a call from there
+        }
+
+        public void trace(OutputStreamWriter os) throws Exception {
+            os.write(String.format("CALL %s\n", m_identifier));
         }
     }
 
@@ -109,7 +130,7 @@ public abstract class Instr {
         }
 
         public void trace(OutputStreamWriter os) throws Exception {
-            os.write("LITERAL\n");
+            os.write(String.format("INTEGER %s\n", m_value));
         }
     }
 
@@ -288,7 +309,7 @@ public abstract class Instr {
 
 
     public static class VarAccessInstr extends InstrIntf {
-        String m_identifier;
+        private String m_identifier;
 
         public VarAccessInstr(String identifier) {
             m_identifier = identifier;
@@ -299,7 +320,7 @@ public abstract class Instr {
         }
 
         public void trace(OutputStreamWriter os) throws Exception {
-            os.write("VARIABLE\n");
+            os.write(String.format("VARIABLE %s\n", m_identifier));
         }
     }
 
