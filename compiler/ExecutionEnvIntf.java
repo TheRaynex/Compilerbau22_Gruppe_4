@@ -1,7 +1,7 @@
 package compiler;
 
 import java.io.OutputStreamWriter;
-import java.util.Iterator;
+import java.util.ListIterator;
 
 public interface ExecutionEnvIntf {
     public FunctionTable getFunctionTable();
@@ -29,11 +29,13 @@ public interface ExecutionEnvIntf {
     /**
      *  set instruction iterator to the given block
      */
-	public void setInstrIter(Iterator<InstrIntf> instrIter);
+	public void setInstrIter(ListIterator<InstrIntf> instrIter);
+    
+    public ListIterator<InstrIntf> getInstrIter();
     /**
      *  execute instruction list	
      */
-	public void execute(Iterator<InstrIntf> instrIter) throws Exception;
+	public void execute(ListIterator<InstrIntf> instrIter) throws Exception;
 	/**
 	 *  get output stream
 	 */

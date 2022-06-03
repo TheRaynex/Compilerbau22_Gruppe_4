@@ -52,7 +52,7 @@ public abstract class Instr {
     }
     
     public static class ReturnInstr extends InstrIntf {
-
+        
         private InstrIntf m_result;
         
         public ReturnInstr(InstrIntf result) {
@@ -60,9 +60,32 @@ public abstract class Instr {
         }
 
         public void execute(ExecutionEnvIntf env) {
+            // Retrieve return value
             int value = m_result.getValue();
-            // TODO: Pop all variables from stack
-            // TODO: Take reference back to calling function
+            
+            // Pop values
+            // TODO: Figure out how to handle this.
+            // Should the values be remaining on the stack when
+            // calling the function or are they meant to be popped?
+            // I think, they should remain on the stack because otherwise
+            // they would be lost
+            
+            // Go back to calling function
+            env.popFunction();
+            
+            // Assign return value to instruction:
+            // The previous element must be read, because the
+            // iterator points after the call instruction.
+            // It previously has been read using next(), after
+            // which the iterator (now pointing after it) has
+            // been put onto the stack as a return address.
+            InstrIntf call = env.getInstrIter().previous();
+            call.m_value = value;
+            
+            // After assigning the value, the old iterator
+            // state must be restored, so that the instruction
+            // following the call is executed next.
+            env.getInstrIter().next();
         }
 
         public void trace(OutputStreamWriter os) throws Exception {

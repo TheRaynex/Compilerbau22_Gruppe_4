@@ -2,14 +2,14 @@ package compiler;
 
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.util.Iterator;
+import java.util.ListIterator;
 import java.util.Stack;
 
 public class ExecutionEnv implements ExecutionEnvIntf {
     private SymbolTable m_symbolTable;
     private Stack<Integer> m_numberStack;
-    private Stack<Iterator<InstrIntf>> m_executionStack;
-    private Iterator<InstrIntf> m_instrIter;
+    private Stack<ListIterator<InstrIntf>> m_executionStack;
+    private ListIterator<InstrIntf> m_instrIter;
     private OutputStreamWriter m_outStream;
     private FunctionTable m_functionTable;
     private boolean m_trace;
@@ -17,7 +17,7 @@ public class ExecutionEnv implements ExecutionEnvIntf {
     public ExecutionEnv(FunctionTable functionTable, SymbolTable symbolTable, OutputStream outStream, boolean trace) throws Exception {
 		m_symbolTable = symbolTable;
 		m_numberStack = new Stack<Integer>();
-		m_executionStack = new Stack<Iterator<InstrIntf>>();
+		m_executionStack = new Stack<ListIterator<InstrIntf>>();
 		m_outStream = new OutputStreamWriter(outStream, "UTF-8");
 		m_functionTable = functionTable;
 		m_trace = trace;
@@ -29,7 +29,7 @@ public class ExecutionEnv implements ExecutionEnvIntf {
     }
     
 	public void pushNumber(int number) {
-		m_numberStack.push(new Integer(number));
+		m_numberStack.push(number);
 	}
 	
 	public int popNumber() {
@@ -41,11 +41,15 @@ public class ExecutionEnv implements ExecutionEnvIntf {
 		return m_symbolTable.getSymbol(symbolName);
 	}
 
-	public void setInstrIter(Iterator<InstrIntf> instrIter) { // instrIter == program counter
+	public void setInstrIter(ListIterator<InstrIntf> instrIter) { // instrIter == program counter
 		m_instrIter = instrIter;
 	}
 	
-    public void execute(Iterator<InstrIntf> instrIter) throws Exception {
+    public ListIterator<InstrIntf> getInstrIter() {
+        return m_instrIter;
+    }
+    
+    public void execute(ListIterator<InstrIntf> instrIter) throws Exception {
         m_instrIter = instrIter;
         while (m_instrIter.hasNext()) {
             InstrIntf nextInstr = m_instrIter.next();
