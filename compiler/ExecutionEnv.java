@@ -23,6 +23,11 @@ public class ExecutionEnv implements ExecutionEnvIntf {
 		m_trace = trace;
 	}
 	
+    @Override
+    public FunctionTable getFunctionTable() {
+        return m_functionTable;
+    }
+    
 	public void pushNumber(int number) {
 		m_numberStack.push(new Integer(number));
 	}

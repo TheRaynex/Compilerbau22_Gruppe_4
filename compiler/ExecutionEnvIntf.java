@@ -4,6 +4,8 @@ import java.io.OutputStreamWriter;
 import java.util.Iterator;
 
 public interface ExecutionEnvIntf {
+    public FunctionTable getFunctionTable();
+    
 	/**
 	 *  push temporary on value stack
 	 */

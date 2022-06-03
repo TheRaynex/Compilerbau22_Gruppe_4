@@ -1,6 +1,5 @@
 package compiler;
 
-import compiler.ast.ASTExprNode;
 import java.io.OutputStreamWriter;
 import java.util.List;
 
@@ -40,9 +39,11 @@ public abstract class Instr {
         }
 
         public void execute(ExecutionEnvIntf env) {
-            // TODO: Put return address on stack
-            // TODO: Put variables on stack
-            // TODO: Jump to function behind m_identifier
+            // Put values onto stack
+            m_args.forEach(arg -> env.pushNumber(arg.getValue()));
+            
+            // Put return function on stack
+            env.pushFunction(env.getFunctionTable().getFunction(m_identifier));
         }
 
         public void trace(OutputStreamWriter os) throws Exception {
