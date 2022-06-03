@@ -24,7 +24,7 @@ public class ASTPrintStmtNode extends ASTStmtNode {
     }
 
     @Override
-    public void codegen(compiler.CompileEnv env) {
+    public void codegen(compiler.CompileEnv env) throws Exception {
         // trigger codegen for all child nodes
         this.node.codegen(env);
         compiler.InstrIntf instrToPrint = this.node.getInstr();

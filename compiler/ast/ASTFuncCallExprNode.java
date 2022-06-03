@@ -28,13 +28,23 @@ public class ASTFuncCallExprNode extends ASTExprNode {
     }
     
     @Override
-    public void codegen(compiler.CompileEnv env) {
+    public void codegen(compiler.CompileEnv env) throws Exception {
+        if (env.getFunctionTable().getFunction(m_identifier) == null) {
+            throw new Exception(String.format("Function \"%s\" not defined.", m_identifier));
+        }
+        
         List<InstrIntf> instructions = this.m_args.stream().map(arg -> {
             // Generate code for each expression
-            arg.codegen(env);
-    
-            // And get the instruction
-            return arg.getInstr();
+            try {
+                arg.codegen(env);
+        
+                // And get the instruction
+                return arg.getInstr();
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
+            
+            return null;
         }).toList();
         
         // Generate this instruction and add to environment
