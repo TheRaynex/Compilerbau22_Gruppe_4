@@ -1,5 +1,6 @@
 package compiler.ast;
 
+import compiler.FunctionInfo;
 import compiler.Instr;
 import compiler.InstrIntf;
 
@@ -29,8 +30,16 @@ public class ASTFuncCallExprNode extends ASTExprNode {
     
     @Override
     public void codegen(compiler.CompileEnv env) throws Exception {
-        if (env.getFunctionTable().getFunction(m_identifier) == null) {
+        FunctionInfo info = env.getFunctionTable().getFunction(m_identifier);
+        
+        // Check if function is even defined
+        if (info == null) {
             throw new Exception(String.format("Function \"%s\" not defined.", m_identifier));
+        }
+        
+        // Check if correct amount of expressions given
+        if (info.varNames.size() != m_args.size()) {
+            throw new Exception(String.format("Function call \"%s\" has invalid argument count.", info.m_name));
         }
         
         List<InstrIntf> instructions = this.m_args.stream().map(arg -> {
