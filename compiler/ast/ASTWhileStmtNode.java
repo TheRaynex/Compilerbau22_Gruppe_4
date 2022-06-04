@@ -3,6 +3,7 @@ package compiler.ast;
 import java.io.OutputStreamWriter;
 
 import compiler.CompileEnv;
+import compiler.Instr;
 
 public class ASTWhileStmtNode extends ASTStmtNode {
 	
@@ -39,7 +40,10 @@ public class ASTWhileStmtNode extends ASTStmtNode {
         compiler.InstrIntf instrToExecute = this.blockstmt.getInstr();
         
         // create instruction object
+        m_instr = new Instr.WhileInstr(instrToEval, instrToExecute);
+        
         // add instruction to current code block (?)
+        env.addInstr(m_instr);
 	}
 
 }
