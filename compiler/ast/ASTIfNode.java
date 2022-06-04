@@ -10,11 +10,22 @@ public class ASTIfNode extends ASTStmtNode {
     private final ASTStmtNode m_ifBody;
     private final ASTStmtNode m_elseBlock;
     private static int m_index = 0;
+    private boolean ifBlockExecuted;
 
     public ASTIfNode(ASTExprNode m_ifCondition, ASTStmtNode m_ifBody, ASTStmtNode m_elseBlock) {
         this.m_ifCondition = m_ifCondition;
         this.m_ifBody = m_ifBody;
         this.m_elseBlock = m_elseBlock;
+    }
+
+    public void setGotExecuted(boolean executed) {
+        this.ifBlockExecuted = executed;
+        if (m_elseBlock instanceof ASTIfNode) {
+            ((ASTIfNode) m_elseBlock).setGotExecuted(executed);
+        }
+        if (m_elseBlock instanceof ASTElseNode) {
+            ((ASTElseNode) m_elseBlock).setGotExecuted(executed);
+        }
     }
 
     @Override
@@ -36,9 +47,10 @@ public class ASTIfNode extends ASTStmtNode {
 
     @Override
     public void execute() {
-        if (m_ifCondition.eval() != 0) {
+        if (m_ifCondition.eval() != 0 && !ifBlockExecuted) {
+            this.setGotExecuted(true);
             m_ifBody.execute();
-        } else if (m_elseBlock instanceof ASTIfNode || m_elseBlock instanceof ASTElseNode) {
+        } else if (!ifBlockExecuted && (m_elseBlock instanceof ASTIfNode || m_elseBlock instanceof ASTElseNode)) {
             m_elseBlock.execute();
         }
     }
@@ -55,6 +67,7 @@ public class ASTIfNode extends ASTStmtNode {
         // current block of CompileEnv is our entry block
         // terminate entry block with jump/conditional jump
         // into block of control structure
+
         compiler.InstrIntf jmpIntoCondition = new compiler.Instr.JumpInstr(condition);
         env.addInstr(jmpIntoCondition);
 
@@ -64,35 +77,33 @@ public class ASTIfNode extends ASTStmtNode {
         // belong into this block
         env.setCurrentBlock(condition);
         m_ifCondition.codegen(env);
-        env.setCurrentBlock(body);
-        m_ifBody.codegen(env);
-        if (m_elseBlock instanceof ASTIfNode || m_elseBlock instanceof ASTElseNode) {
-            env.setCurrentBlock(elseHead);
-            m_elseBlock.codegen(env);
-        }
 
         // terminate current block with jump
-        env.setCurrentBlock(condition);
             // Instr to check if condition is true
             var conditionInstr = m_ifCondition.getInstr();
             var conditionEqualZero = new Instr.CompareEqualInstr(conditionInstr, new Instr.IntegerLiteralInstr(0));
             var conditionNotEqualZero = new Instr.NotInstr(conditionEqualZero);
+            // instr to check if no other block has been executed
+
+        //ifBlockExecuted needs to be a separted variable in code
+            var ifBlockExecutedInstr = new Instr.CompareEqualInstr(new Instr.IntegerLiteralInstr(ifBlockExecuted ? 1 : 0), new Instr.IntegerLiteralInstr(0));
+            var combinedInstr = new Instr.AndInstr(conditionNotEqualZero, ifBlockExecutedInstr);
 
         var jmpToBodyIfValueNotZero = new Instr.JumpCondInstr(conditionNotEqualZero, body, elseHead);
         env.addInstr(jmpToBodyIfValueNotZero);
 
-        // switch CompileEnv to exit block
-        // body block
         env.setCurrentBlock(body);
+        m_ifBody.codegen(env);
         var jmpToExit = new compiler.Instr.JumpInstr(exit);
         env.addInstr(jmpToExit);
 
-        // else block
         env.setCurrentBlock(elseHead);
+        if (m_elseBlock instanceof ASTIfNode || m_elseBlock instanceof ASTElseNode) {
+            m_elseBlock.codegen(env);
+        }
         env.addInstr(jmpToExit);
 
+        // switch CompileEnv to exit block
         env.setCurrentBlock(exit);
-
-        // in tiferen schachtlungen fehlt der jump auf den höheren exit block
     }
 }

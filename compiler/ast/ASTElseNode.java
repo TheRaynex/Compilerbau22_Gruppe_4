@@ -6,9 +6,14 @@ public class ASTElseNode extends ASTStmtNode {
 
     private final ASTStmtNode m_content;
     private static int m_index = 0;
+    private boolean ifBlockExecuted;
 
     public ASTElseNode(ASTStmtNode m_content) {
         this.m_content = m_content;
+    }
+
+    public void setGotExecuted(boolean executed) {
+        this.ifBlockExecuted = executed;
     }
 
     @Override
@@ -22,7 +27,10 @@ public class ASTElseNode extends ASTStmtNode {
 
     @Override
     public void execute() {
-        m_content.execute();
+        if (!ifBlockExecuted) {
+            this.setGotExecuted(true);
+            m_content.execute();
+        }
     }
 
     @Override
