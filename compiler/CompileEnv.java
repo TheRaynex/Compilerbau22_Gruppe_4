@@ -10,6 +10,7 @@ public class CompileEnv implements CompileEnvIntf {
     private FunctionTable m_functionTable;
     private Lexer m_lexer;
     private Parser m_parser;
+    compiler.ast.ASTStmtNode m_root;
     private InstrBlock m_entry;
     private InstrBlock m_currentBlock;
     private ArrayList<InstrBlock> m_blockList;
@@ -32,8 +33,14 @@ public class CompileEnv implements CompileEnvIntf {
         m_entry = new InstrBlock("entry");
         m_blockList.add(m_entry);
         m_currentBlock = m_entry;
-        compiler.ast.ASTStmtNode root = m_parser.getBlockStmt();
-        root.codegen(this);
+        m_root = m_parser.getBlockStmt();
+        m_root.codegen(this);
+    }
+
+    public void dumpAst(OutputStream outStream) throws Exception {
+        OutputStreamWriter os = new OutputStreamWriter(outStream, "UTF-8");
+        m_root.print(os, "");
+        os.flush();
     }
 
     public void dump(OutputStream outStream) throws Exception {
