@@ -249,9 +249,7 @@ public class Parser {
         m_lexer.expect(TokenIntf.Type.RPAREN);
         ASTStmtNode blockstmt = getBlockStmt();
         ASTStmtNode elseblock = getElseStmtHead();
-        var result = new ASTIfNode(condition, blockstmt, elseblock);
-        result.setGotExecuted(false);
-        return result;
+        return new ASTIfNode(condition, blockstmt, elseblock);
     }
 
     //elsestmthead: ELSE elsebody | EPSILON

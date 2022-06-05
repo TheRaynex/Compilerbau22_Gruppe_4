@@ -10,22 +10,11 @@ public class ASTIfNode extends ASTStmtNode {
     private final ASTStmtNode m_ifBody;
     private final ASTStmtNode m_elseBlock;
     private static int m_index = 0;
-    private boolean ifBlockExecuted;
 
     public ASTIfNode(ASTExprNode m_ifCondition, ASTStmtNode m_ifBody, ASTStmtNode m_elseBlock) {
         this.m_ifCondition = m_ifCondition;
         this.m_ifBody = m_ifBody;
         this.m_elseBlock = m_elseBlock;
-    }
-
-    public void setGotExecuted(boolean executed) {
-        this.ifBlockExecuted = executed;
-        if (m_elseBlock instanceof ASTIfNode) {
-            ((ASTIfNode) m_elseBlock).setGotExecuted(executed);
-        }
-        if (m_elseBlock instanceof ASTElseNode) {
-            ((ASTElseNode) m_elseBlock).setGotExecuted(executed);
-        }
     }
 
     @Override
@@ -47,10 +36,9 @@ public class ASTIfNode extends ASTStmtNode {
 
     @Override
     public void execute() {
-        if (m_ifCondition.eval() != 0 && !ifBlockExecuted) {
-            this.setGotExecuted(true);
+        if (m_ifCondition.eval() != 0) {
             m_ifBody.execute();
-        } else if (!ifBlockExecuted && (m_elseBlock instanceof ASTIfNode || m_elseBlock instanceof ASTElseNode)) {
+        } else if (m_elseBlock instanceof ASTIfNode || m_elseBlock instanceof ASTElseNode) {
             m_elseBlock.execute();
         }
     }
@@ -79,17 +67,10 @@ public class ASTIfNode extends ASTStmtNode {
         m_ifCondition.codegen(env);
 
         // terminate current block with jump
-            // Instr to check if condition is true
-            var conditionInstr = m_ifCondition.getInstr();
-            var conditionEqualZero = new Instr.CompareEqualInstr(conditionInstr, new Instr.IntegerLiteralInstr(0));
-            var conditionNotEqualZero = new Instr.NotInstr(conditionEqualZero);
-            // instr to check if no other block has been executed
+        // Instr to check if condition is true
+        var conditionInstr = m_ifCondition.getInstr();
 
-        //ifBlockExecuted needs to be a separted variable in code
-            var ifBlockExecutedInstr = new Instr.CompareEqualInstr(new Instr.IntegerLiteralInstr(ifBlockExecuted ? 1 : 0), new Instr.IntegerLiteralInstr(0));
-            var combinedInstr = new Instr.AndInstr(conditionNotEqualZero, ifBlockExecutedInstr);
-
-        var jmpToBodyIfValueNotZero = new Instr.JumpCondInstr(conditionNotEqualZero, body, elseHead);
+        var jmpToBodyIfValueNotZero = new Instr.JumpCondInstr(conditionInstr, body, elseHead);
         env.addInstr(jmpToBodyIfValueNotZero);
 
         env.setCurrentBlock(body);
