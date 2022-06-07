@@ -10,7 +10,7 @@ import java.io.OutputStreamWriter;
 public class ASTExecuteNTimesNode extends ASTStmtNode {
 	ASTExprNode m_n;
 	ASTBlockStmtNode m_block = new ASTBlockStmtNode();
-	private int m_index;
+	private static int m_index = 0;
 
 	@Override
 	public void print(OutputStreamWriter outStream, String indent) throws Exception {
@@ -39,24 +39,25 @@ public class ASTExecuteNTimesNode extends ASTStmtNode {
     @Override
     public void codegen(compiler.CompileEnv env) {
 
-        
+        int thisIndex = m_index;
+        m_index++;
+
         // create code blocks needed for control structure
-        InstrBlock body = env.createBlock("loop_body_" + m_index);
-        InstrBlock init = env.createBlock("loop_init_" + m_index);
-        InstrBlock head = env.createBlock("loop_head_" + m_index);
-        InstrBlock exit = env.createBlock("loop_exit_" + m_index);
+        InstrBlock body = env.createBlock("loop_body_" + thisIndex);
+        InstrBlock init = env.createBlock("loop_init_" + thisIndex);
+        InstrBlock head = env.createBlock("loop_head_" + thisIndex);
+        InstrBlock exit = env.createBlock("loop_exit_" + thisIndex);
         // current block of CompileEnv is our entry block
         // terminate entry block with jump/conditional jump
         // into block of control structure
 
-        Symbol symbol = env.getSymbolTable().createSymbol("i_" + m_index);
-        m_index++;
+        Symbol symbol = env.getSymbolTable().createSymbol("i_" + thisIndex);
 
         m_n.codegen(env);
         InstrIntf n = m_n.getInstr();
 
 
-        InstrIntf acc = new Instr.VarAccessInstr("i_" + m_index);
+        InstrIntf acc = new Instr.VarAccessInstr("i_" + thisIndex);
         InstrIntf one = new Instr.IntegerLiteralInstr(1);
         InstrIntf inc = new Instr.AddInstr(acc, one);
         InstrIntf ass = new Instr.VarAssignInstr(inc, symbol);
@@ -97,6 +98,7 @@ public class ASTExecuteNTimesNode extends ASTStmtNode {
 
         // switch CompileEnv to exit block
         env.setCurrentBlock(exit);
+
     }
 
 }
