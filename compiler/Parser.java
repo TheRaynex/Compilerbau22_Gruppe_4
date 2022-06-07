@@ -77,7 +77,7 @@ public class Parser {
         var caselist = getCaseListStmt(expr);
         m_lexer.expect(TokenIntf.Type.RBRACE);
 
-        return new ASTSwitchStmtNode(expr, caselist);
+        return new ASTSwitchStmtNode(caselist);
     }
 
     ASTStmtNode getCaseListStmt(ASTExprNode expr) throws Exception {
