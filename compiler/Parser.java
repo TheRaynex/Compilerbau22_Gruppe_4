@@ -90,12 +90,26 @@ public class Parser {
                     return ret;
                 case CASE:
                     ret.addCase(getCaseStmt());
+                    break;
+                default:
+                    throw new CompilerException("unexpected token in switch statement", m_lexer.m_currentLineNumber, m_lexer.m_currentLine, "CASE or RBRACE");
             }
         }
     }
 
+    //CASE literal COLON blockStmt // literal: INTEGER     right now
     ASTStmtNode getCaseStmt() throws Exception {
+        m_lexer.expect(TokenIntf.Type.CASE);
 
+        // for now only integer implementation because expression evaluates to integer
+        var caseLiteral = m_lexer.lookAhead();
+        m_lexer.expect(TokenIntf.Type.INTEGER);
+
+        m_lexer.expect(TokenIntf.Type.DOUBLECOLON);
+
+        var blockStmt = getBlockStmt();
+
+        return new ASTCaseStmtNode(caseLiteral, blockStmt);
     }
     
     ASTExprNode getMulDivExpr() throws Exception {
@@ -215,6 +229,8 @@ public class Parser {
             return getBlockStmt();
         } else if (token.m_type == Token.Type.BLOCK) {
             return getBlock();
+        } else if (token.m_type == Token.Type.SWITCH) {
+            return getSwitchStmt();
         }
         throw new Exception("Unexpected Statement");
     }
