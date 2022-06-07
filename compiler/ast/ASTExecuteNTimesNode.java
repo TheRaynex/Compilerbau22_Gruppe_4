@@ -62,7 +62,7 @@ public class ASTExecuteNTimesNode extends ASTStmtNode {
         InstrIntf inc = new Instr.AddInstr(acc, one);
         InstrIntf ass = new Instr.VarAssignInstr(inc, symbol);
 
-        InstrIntf resetI = new Instr.VarAssignInstr(new Instr.IntegerLiteralInstr(1), symbol);
+        InstrIntf resetI = new Instr.VarAssignInstr(new Instr.IntegerLiteralInstr(0), symbol);
 
         InstrIntf cond = new Instr.CompareLessInstr(acc, n);
 
@@ -77,6 +77,7 @@ public class ASTExecuteNTimesNode extends ASTStmtNode {
         env.addInstr(jmpToHead);
 
         env.setCurrentBlock(head);
+        env.addInstr(acc);
         env.addInstr(cond);
         env.addInstr(jmpToBody);
         // for each block of control structure
