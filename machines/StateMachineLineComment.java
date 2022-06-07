@@ -32,8 +32,11 @@ public class StateMachineLineComment extends compiler.StateMachine {
 		compiler.State inComment = new compiler.State("inComment");
 		inComment.addTransition(' ', "inComment");
 		addTransitionForLetter(inComment, "inComment");
-		inComment.addTransition('/', "inComment");
+        addTransitionForNumber(inComment, "inComment");
+        addTransitionForAllAsciiSymbolsExceptQuotationMark(inComment, "inComment");
+        inComment.addTransition('/', "inComment");
 		m_stateMap.put("inComment", inComment);
+        inComment.addTransition('\r', "inComment");
 		inComment.addTransition('\n', "end");
 
 		compiler.State end = new compiler.State("end");

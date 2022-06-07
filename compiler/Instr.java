@@ -217,7 +217,7 @@ public abstract class Instr {
     	}
     	
     	public void execute(ExecutionEnvIntf env) {
-    		if(m_cond.getValue() ==1) {
+    		if(m_cond.getValue() != 0) {
     			m_value = m_targetTrue.getValue();
     		}else {	
     			m_value = m_targetFalse.getValue();
@@ -353,5 +353,74 @@ public abstract class Instr {
         }
     }
 
+    public static class MulInstr extends InstrIntf {
+        private InstrIntf m_lhs;
+        private InstrIntf m_rhs;
 
+        public MulInstr(InstrIntf lhs, InstrIntf rhs) {
+            m_lhs = lhs;
+            m_rhs = rhs;
+        }
+
+        public void execute(ExecutionEnvIntf env) {
+            m_value = m_lhs.getValue() * m_rhs.getValue();
+        }
+
+        public void trace(OutputStreamWriter os) throws Exception {
+            os.write("MUL\n");
+        }
+    }
+    public static class DivInstr extends InstrIntf {
+        private InstrIntf m_lhs;
+        private InstrIntf m_rhs;
+
+        public DivInstr(InstrIntf lhs, InstrIntf rhs) {
+            m_lhs = lhs;
+            m_rhs = rhs;
+        }
+
+        public void execute(ExecutionEnvIntf env) {
+            m_value = m_lhs.getValue() / m_rhs.getValue();
+        }
+
+        public void trace(OutputStreamWriter os) throws Exception {
+            os.write("DIV\n");
+        }
+    }
+
+    public static class ShiftLeftInstr extends InstrIntf {
+        private InstrIntf m_lhs;
+        private InstrIntf m_rhs;
+
+        public ShiftLeftInstr(InstrIntf lhs, InstrIntf rhs) {
+            m_lhs = lhs;
+            m_rhs = rhs;                   
+        }
+
+        public void execute(ExecutionEnvIntf env) {
+            m_value = m_lhs.getValue() << m_rhs.getValue();
+        }
+
+        public void trace(OutputStreamWriter os) throws Exception {
+            os.write("SHIFTLEFT\n");
+        }
+    }
+
+    public static class ShiftRightInstr extends InstrIntf {
+        private InstrIntf m_lhs;
+        private InstrIntf m_rhs;
+
+        public ShiftRightInstr(InstrIntf lhs, InstrIntf rhs) {
+            m_lhs = lhs;
+            m_rhs = rhs;                   
+        }
+
+        public void execute(ExecutionEnvIntf env) {
+            m_value = m_lhs.getValue() >> m_rhs.getValue();
+        }
+
+        public void trace(OutputStreamWriter os) throws Exception {
+            os.write("SHIFTRIGHT\n");
+        }
+    }
 }

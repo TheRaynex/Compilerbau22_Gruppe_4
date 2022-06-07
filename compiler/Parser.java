@@ -54,10 +54,11 @@ public class Parser {
 
         if (token == TokenIntf.Type.MINUS || token == TokenIntf.Type.NOT) {
             m_lexer.advance();
+            var parenExpr = getParantheseExpr();
+            return new ASTUnaryExprNode(parenExpr, token);
         }
-
-        var parenExpr = getParantheseExpr();
-        return new ASTUnaryExprNode(parenExpr, token);
+        
+        return getParantheseExpr();
     }
 
     /*
@@ -151,7 +152,14 @@ public class Parser {
     }
 
     ASTExprNode getShiftExpr() throws Exception {
-        return getBitAndOrExpr();
+        ASTExprNode result = getBitAndOrExpr();
+        Token nextToken = m_lexer.lookAhead();
+        while(nextToken.m_type == Token.Type.SHIFTLEFT || nextToken.m_type == Token.Type.SHIFTRIGHT){
+            m_lexer.advance();
+            result = new ASTShiftExprNode(result, getBitAndOrExpr(), nextToken.m_type);
+            nextToken = m_lexer.lookAhead();
+        }
+        return result;
     }
 
     ASTExprNode getCompareExpr() throws Exception {
@@ -231,6 +239,8 @@ public class Parser {
             return getBlock();
         } else if (token.m_type == Token.Type.SWITCH) {
             return getSwitchStmt();
+        } else if (token.m_type == Token.Type.IF){
+            return getIfStmt();
         }
         throw new Exception("Unexpected Statement");
     }
@@ -285,6 +295,37 @@ public class Parser {
 
     }
 
+    //ifstmt: IF LPAREN condition RPAREN blockstmt elsestmthead
+    //condition: expr
+    ASTStmtNode getIfStmt() throws Exception {
+        m_lexer.expect(TokenIntf.Type.IF);
+        m_lexer.expect(TokenIntf.Type.LPAREN);
+        ASTExprNode condition = getExpr();
+        m_lexer.expect(TokenIntf.Type.RPAREN);
+        ASTStmtNode blockstmt = getBlockStmt();
+        ASTStmtNode elseblock = getElseStmtHead();
+        return new ASTIfNode(condition, blockstmt, elseblock);
+    }
 
+    //elsestmthead: ELSE elsebody | EPSILON
+    ASTStmtNode getElseStmtHead() throws Exception {
+        Token token = m_lexer.lookAhead();
+        ASTStmtNode result = null;
+        if (token.m_type == TokenIntf.Type.ELSE) {
+            m_lexer.advance();
+            result = getElseBody();
+        }
+        return result;
+    }
 
+    //elsebody: ifstmt
+    //elsebody: blockstmt
+    ASTStmtNode getElseBody() throws Exception {
+        Token token = m_lexer.lookAhead();
+        if (token.m_type == TokenIntf.Type.IF){
+            return getIfStmt();
+        } else {
+            return new ASTElseNode(getBlockStmt());
+        }
+    }
 }
