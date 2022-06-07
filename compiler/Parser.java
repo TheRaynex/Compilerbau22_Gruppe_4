@@ -60,6 +60,58 @@ public class Parser {
         
         return getParantheseExpr();
     }
+
+    /*
+    Franziska Ommer, Leon Neumann, Dominik Ochs, Philipp Reichert
+
+    switchcase: SWITCH LPAREN expression RPAREN LBRACE caselist RBRACE
+    caselist: case caselist
+    caselist: eps
+    case: CASE literal COLON blockStmt
+     */
+    ASTStmtNode getSwitchStmt() throws Exception {
+        m_lexer.expect(TokenIntf.Type.SWITCH);
+        m_lexer.expect(TokenIntf.Type.LPAREN);
+        var expr = getExpr();
+        m_lexer.expect(TokenIntf.Type.RPAREN);
+        m_lexer.expect(TokenIntf.Type.LBRACE);
+        var caselist = getCaseListStmt(expr);
+        m_lexer.expect(TokenIntf.Type.RBRACE);
+
+        return new ASTSwitchStmtNode(caselist);
+    }
+
+    ASTStmtNode getCaseListStmt(ASTExprNode expr) throws Exception {
+        var ret = new ASTCaselistStmtNode(expr);
+
+        while (true) {
+            var next = m_lexer.lookAhead().m_type;
+            switch (next) {
+                case RBRACE:
+                    return ret;
+                case CASE:
+                    ret.addCase(getCaseStmt());
+                    break;
+                default:
+                    throw new CompilerException("unexpected token in switch statement", m_lexer.m_currentLineNumber, m_lexer.m_currentLine, "CASE or RBRACE");
+            }
+        }
+    }
+
+    //CASE literal COLON blockStmt // literal: INTEGER     right now
+    ASTCaseStmtNode getCaseStmt() throws Exception {
+        m_lexer.expect(TokenIntf.Type.CASE);
+
+        // for now only integer implementation because expression evaluates to integer
+        var caseLiteral = m_lexer.lookAhead();
+        m_lexer.expect(TokenIntf.Type.INTEGER);
+
+        m_lexer.expect(TokenIntf.Type.DOUBLECOLON);
+
+        var blockStmt = getBlockStmt();
+
+        return new ASTCaseStmtNode(caseLiteral, blockStmt);
+    }
     
     ASTExprNode getMulDivExpr() throws Exception {
         ASTExprNode result = getUnaryExpr();
@@ -185,6 +237,8 @@ public class Parser {
             return getBlockStmt();
         } else if (token.m_type == Token.Type.BLOCK) {
             return getBlock();
+        } else if (token.m_type == Token.Type.SWITCH) {
+            return getSwitchStmt();
         } else if (token.m_type == Token.Type.IF){
             return getIfStmt();
         }
