@@ -66,10 +66,36 @@ public class Parser {
     switchcase: SWITCH LPAREN expression RPAREN LBRACE caselist RBRACE
     caselist: case caselist
     caselist: eps
-    case: CASE literal COLON statementlist
+    case: CASE literal COLON blockStmt
      */
     ASTStmtNode getSwitchStmt() throws Exception {
-        throw new Exception("not implemented");
+        m_lexer.expect(TokenIntf.Type.SWITCH);
+        m_lexer.expect(TokenIntf.Type.LPAREN);
+        var expr = getExpr();
+        m_lexer.expect(TokenIntf.Type.RPAREN);
+        m_lexer.expect(TokenIntf.Type.LBRACE);
+        var caselist = getCaseListStmt();
+        m_lexer.expect(TokenIntf.Type.RBRACE);
+
+        return new ASTSwitchStmtNode(expr, caselist);
+    }
+
+    ASTStmtNode getCaseListStmt() throws Exception {
+        var ret = new ASTCaselistStmtNode();
+
+        while (true) {
+            var next = m_lexer.lookAhead().m_type;
+            switch (next) {
+                case RBRACE:
+                    return ret;
+                case CASE:
+                    ret.addCase(getCaseStmt());
+            }
+        }
+    }
+
+    ASTStmtNode getCaseStmt() throws Exception {
+
     }
     
     ASTExprNode getMulDivExpr() throws Exception {
