@@ -1,9 +1,11 @@
 package compiler.ast;
 
-import java.io.OutputStreamWriter;
-
+import compiler.Instr;
+import compiler.InstrBlock;
+import compiler.InstrIntf;
 import compiler.Symbol;
-import compiler.Instr.IntegerLiteralInstr;
+
+import java.io.OutputStreamWriter;
 
 public class ASTExecuteNTimesNode extends ASTStmtNode {
 	ASTExprNode m_n;
@@ -36,50 +38,62 @@ public class ASTExecuteNTimesNode extends ASTStmtNode {
 	
     @Override
     public void codegen(compiler.CompileEnv env) {
+
+        
         // create code blocks needed for control structure
-        compiler.InstrBlock body = env.createBlock("loop_body_" + m_index);
-        compiler.InstrBlock head = env.createBlock("loop_head_" + m_index);
-        compiler.InstrBlock exit = env.createBlock("loop_exit_" + m_index);
-        m_index++;
+        InstrBlock body = env.createBlock("loop_body_" + m_index);
+        InstrBlock init = env.createBlock("loop_init_" + m_index);
+        InstrBlock head = env.createBlock("loop_head_" + m_index);
+        InstrBlock exit = env.createBlock("loop_exit_" + m_index);
         // current block of CompileEnv is our entry block
         // terminate entry block with jump/conditional jump
         // into block of control structure
-        
-        
-        //compiler.InstrIntf count = new compiler.Instr.VarAssignInstr(m_n.m_instr, new Symbol("count", 420));
-        compiler.InstrIntf count = new compiler.Instr.IntegerLiteralInstr(m_n.eval());
-        compiler.InstrIntf one = new compiler.Instr.IntegerLiteralInstr(1);
-        compiler.InstrIntf dec = new compiler.Instr.SubInstr(count, one);
-        
-        compiler.InstrIntf zero = new compiler.Instr.IntegerLiteralInstr(0);
-        compiler.InstrIntf cond = new compiler.Instr.CompareGreaterInstr(count, zero);
-        
-        compiler.InstrIntf jmpToHead = new compiler.Instr.JumpInstr(head);
-        compiler.InstrIntf condjmpToBody = new compiler.Instr.JumpCondInstr(cond, body, exit); //what is the cond ??
-        env.addInstr(jmpToHead);
-        
-        env.setCurrentBlock(head);
+
+        Symbol symbol = env.getSymbolTable().createSymbol("i_" + m_index);
+        m_index++;
+
         m_n.codegen(env);
-        env.addInstr(zero);
-        env.addInstr(count);
+        InstrIntf n = m_n.getInstr();
+
+
+        InstrIntf acc = new Instr.VarAccessInstr("i_" + m_index);
+        InstrIntf one = new Instr.IntegerLiteralInstr(1);
+        InstrIntf inc = new Instr.AddInstr(acc, one);
+        InstrIntf ass = new Instr.VarAssignInstr(inc, symbol);
+
+        InstrIntf resetI = new Instr.VarAssignInstr(new Instr.IntegerLiteralInstr(1), symbol);
+
+        InstrIntf cond = new Instr.CompareLessInstr(acc, n);
+
+        InstrIntf jmpToInit = new Instr.JumpInstr(init);
+        InstrIntf jmpToHead = new Instr.JumpInstr(head);
+        InstrIntf jmpToBody = new Instr.JumpCondInstr(cond, body, exit); //what is the cond ??
+
+        env.addInstr(jmpToInit);
+
+        env.setCurrentBlock(init);
+        env.addInstr(resetI);
+        env.addInstr(jmpToHead);
+
+        env.setCurrentBlock(head);
         env.addInstr(cond);
-        env.addInstr(condjmpToBody);
-        
+        env.addInstr(jmpToBody);
         // for each block of control structure
         // switch CompileEnv to the corresponding block
         env.setCurrentBlock(body);
-        m_block.codegen(env);
-        env.addInstr(count);
-        env.addInstr(one);
-        env.addInstr(dec);
-        env.addInstr(jmpToHead);
+
         // trigger codegen of statements that
         // belong into this block
+        m_block.codegen(env);
+        env.addInstr(acc);
+        env.addInstr(one);
+        env.addInstr(inc);
+        env.addInstr(ass);
+        env.addInstr(jmpToHead);
 
-        
         // terminate current block with jump
-        compiler.InstrIntf jmpToExit = new compiler.Instr.JumpInstr(exit);
-        env.addInstr(jmpToExit);
+        //compiler.InstrIntf jmpToExit = new compiler.Instr.JumpInstr(exit);
+        //env.addInstr(jmpToExit);
 
         // switch CompileEnv to exit block
         env.setCurrentBlock(exit);
