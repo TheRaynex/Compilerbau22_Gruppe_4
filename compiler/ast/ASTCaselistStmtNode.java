@@ -5,9 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ASTCaselistStmtNode extends ASTStmtNode {
-    private final List<ASTStmtNode> caseList = new ArrayList<>();
+    private final List<ASTCaseStmtNode> caseList = new ArrayList<>();
+    private final ASTExprNode expr;
 
-    public void addCase(ASTStmtNode c) {
+    public ASTCaselistStmtNode(ASTExprNode expr) {
+        this.expr = expr;
+    }
+
+    public void addCase(ASTCaseStmtNode c) {
         caseList.add(c);
     }
 
@@ -20,6 +25,9 @@ public class ASTCaselistStmtNode extends ASTStmtNode {
 
     @Override
     public void execute() {
-
+        var value = expr.eval();
+        for (ASTCaseStmtNode caseNode : caseList) {
+            caseNode.execute(value);
+        }
     }
 }

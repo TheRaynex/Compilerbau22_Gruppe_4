@@ -1,6 +1,7 @@
 package compiler.ast;
 
 import compiler.Token;
+import compiler.TokenIntf;
 
 import java.io.OutputStreamWriter;
 
@@ -21,6 +22,12 @@ public class ASTCaseStmtNode extends ASTStmtNode {
 
     @Override
     public void execute() {
+        blockStmt.execute();
+    }
 
+    public void execute(int value) {
+        var literal = Integer.parseInt(caseLiteral.m_value);
+
+        if (value == literal) this.execute();
     }
 }

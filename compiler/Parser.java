@@ -74,14 +74,14 @@ public class Parser {
         var expr = getExpr();
         m_lexer.expect(TokenIntf.Type.RPAREN);
         m_lexer.expect(TokenIntf.Type.LBRACE);
-        var caselist = getCaseListStmt();
+        var caselist = getCaseListStmt(expr);
         m_lexer.expect(TokenIntf.Type.RBRACE);
 
         return new ASTSwitchStmtNode(expr, caselist);
     }
 
-    ASTStmtNode getCaseListStmt() throws Exception {
-        var ret = new ASTCaselistStmtNode();
+    ASTStmtNode getCaseListStmt(ASTExprNode expr) throws Exception {
+        var ret = new ASTCaselistStmtNode(expr);
 
         while (true) {
             var next = m_lexer.lookAhead().m_type;
@@ -98,7 +98,7 @@ public class Parser {
     }
 
     //CASE literal COLON blockStmt // literal: INTEGER     right now
-    ASTStmtNode getCaseStmt() throws Exception {
+    ASTCaseStmtNode getCaseStmt() throws Exception {
         m_lexer.expect(TokenIntf.Type.CASE);
 
         // for now only integer implementation because expression evaluates to integer

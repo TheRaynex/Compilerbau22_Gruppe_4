@@ -21,6 +21,6 @@ public class ASTSwitchStmtNode extends ASTStmtNode {
 
     @Override
     public void execute() {
-
+        caselist.execute();
     }
 }
