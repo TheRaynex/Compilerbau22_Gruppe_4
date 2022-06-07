@@ -14,7 +14,9 @@ public class ASTCaseStmtNode extends ASTStmtNode {
 
     @Override
     public void print(OutputStreamWriter outStream, String indent) throws Exception {
-
+        outStream.write(indent);
+        outStream.write("CASE " + caseLiteral.m_type + "\n");
+        blockStmt.print(outStream, indent + "   ");
     }
 
     @Override

@@ -13,7 +13,9 @@ public class ASTCaselistStmtNode extends ASTStmtNode {
 
     @Override
     public void print(OutputStreamWriter outStream, String indent) throws Exception {
-
+        for (ASTStmtNode child : caseList) {
+            child.print(outStream, indent);
+        }
     }
 
     @Override

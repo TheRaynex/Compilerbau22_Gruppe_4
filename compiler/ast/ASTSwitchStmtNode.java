@@ -12,7 +12,11 @@ public class ASTSwitchStmtNode extends ASTStmtNode {
 
     @Override
     public void print(OutputStreamWriter outStream, String indent) throws Exception {
-
+        outStream.write(indent);
+        outStream.write("SWITCH\n");
+        var childIndent = indent + "  ";
+        expr.print(outStream, childIndent);
+        caselist.print(outStream, childIndent);
     }
 
     @Override
