@@ -68,7 +68,7 @@ public class ASTExecuteNTimesNode extends ASTStmtNode {
 
         InstrIntf jmpToInit = new Instr.JumpInstr(init);
         InstrIntf jmpToHead = new Instr.JumpInstr(head);
-        InstrIntf jmpToBody = new Instr.JumpCondInstr(cond, body, exit); //what is the cond ??
+        InstrIntf jmpToBody = new Instr.JumpCondInstr(cond, body, exit);
 
         env.addInstr(jmpToInit);
 
