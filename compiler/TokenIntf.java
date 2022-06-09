@@ -50,6 +50,7 @@ public abstract class TokenIntf {
         CALL,
         RETURN,
         BLOCK,
+		DEFAULT,
 	}
 
 	public Type m_type;

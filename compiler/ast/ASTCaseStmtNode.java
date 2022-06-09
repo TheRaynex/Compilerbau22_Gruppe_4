@@ -4,12 +4,12 @@ import compiler.*;
 
 import java.io.OutputStreamWriter;
 
-public class ASTCaseStmtNode extends ASTStmtNode {
+public class ASTCaseStmtNode extends ASTCaseListElementStmtNode {
     private final Token caseLiteral;
-    private final ASTStmtNode blockStmt;
 
     public ASTCaseStmtNode(Token caseLiteral, ASTStmtNode blockStmt) {
-        this.caseLiteral = caseLiteral; this.blockStmt = blockStmt;
+        super(blockStmt);
+        this.caseLiteral = caseLiteral;
     }
 
     @Override
@@ -20,10 +20,6 @@ public class ASTCaseStmtNode extends ASTStmtNode {
     }
 
     @Override
-    public void execute() {
-        blockStmt.execute();
-    }
-
     public void codegen(CompileEnv env, InstrIntf cond, compiler.InstrBlock switch_exit, int no) {
         compiler.InstrBlock exec = env.createBlock("case_exec_" + no);
         compiler.InstrBlock check = env.createBlock("case_check_" + no);
@@ -49,6 +45,7 @@ public class ASTCaseStmtNode extends ASTStmtNode {
         env.setCurrentBlock(exit);
     }
 
+    @Override
     public void execute(int value) {
         var literal = Integer.parseInt(caseLiteral.m_value);
 
