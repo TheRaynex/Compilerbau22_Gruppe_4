@@ -57,7 +57,7 @@ public class ASTFuncCallExprNode extends ASTExprNode {
         }).toList();
         
         // Generate this instruction and add to environment
-        m_instr = new Instr.CallInstr(m_identifier, instructions);
+        m_instr = new Instr.CallInstr(info, instructions);
         env.addInstr(m_instr);
     }
     

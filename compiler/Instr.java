@@ -1,5 +1,7 @@
 package compiler;
 
+import compiler.ast.Tuple;
+
 import java.io.OutputStreamWriter;
 import java.util.List;
 
@@ -30,53 +32,36 @@ public abstract class Instr {
     
     public static class CallInstr extends InstrIntf {
 
-        private String m_identifier;
+        private FunctionInfo m_context;
         private List<InstrIntf> m_args;
 
-        public CallInstr(String identifier, List<InstrIntf> args) {
-            m_identifier = identifier;
+        public CallInstr(FunctionInfo context, List<InstrIntf> args) {
+            m_context = context;
             m_args = args;
         }
 
         public void execute(ExecutionEnvIntf env) {
-            // Put values onto stack
-            m_args.forEach(arg -> env.pushNumber(arg.getValue()));
-            
-            // Put return function on stack
-            env.pushFunction(env.getFunctionTable().getFunction(m_identifier));
+            // Put calling function on stack and
+            // activate called function
+            env.pushFunction(m_context, m_args);
         }
 
         public void trace(OutputStreamWriter os) throws Exception {
-            os.write(String.format("CALL %s\n", m_identifier));
+            os.write(String.format("CALL %s\n", m_context.m_name));
         }
     }
     
     public static class ReturnInstr extends InstrIntf {
         
-        private FunctionInfo m_context;
         private InstrIntf m_result;
         
-        public ReturnInstr(FunctionInfo context, InstrIntf result) {
-            m_context = context;
+        public ReturnInstr(InstrIntf result) {
             m_result = result;
         }
 
         public void execute(ExecutionEnvIntf env) {
             // Retrieve return value
             int value = m_result.getValue();
-            
-            // Pop arguments from stack
-            for (int i = 0; i < m_context.varNames.size(); i++) {
-                env.popNumber();
-            }
-            
-            // Pop values
-            // TODO: Figure out how to handle this.
-            // Should the values be remaining on the stack when
-            // calling the function or are they meant to be popped?
-            // I think, they should remain on the stack because otherwise
-            // they would be lost when another function is called
-            
             
             // Go back to calling function
             env.popFunction();
@@ -366,6 +351,16 @@ public abstract class Instr {
         }
 
         public void execute(ExecutionEnvIntf env) {
+            // Get value from argument, if any identifier
+            // exists for the current function
+            for (Tuple<String, Integer> arg : env.getCurrentArgs()) {
+                if (arg._1.equals(m_identifier)) {
+                    m_value = arg._2;
+                    return;
+                }
+            }
+    
+            // No argument has been found, so take global value
             m_value = env.getSymbol(m_identifier).m_number;
         }
 

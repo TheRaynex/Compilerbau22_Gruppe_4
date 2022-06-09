@@ -282,9 +282,6 @@ public class Parser {
                     throw new Exception(
                             String.format(
                                     "Return statement missing in function \"%s\".", identifier));
-                } else {
-                    // Set context function of return statement
-                    ((ASTReturnStmtNode) statement).setContext(m_funcTable.getFunction(identifier));
                 }
             }
         }
