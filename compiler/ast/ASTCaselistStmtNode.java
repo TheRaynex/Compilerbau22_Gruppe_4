@@ -50,7 +50,7 @@ public class ASTCaselistStmtNode extends ASTStmtNode {
 
         for (int i = 0; i <  caseList.size(); i++) {
             ASTCaseStmtNode caseNode = caseList.get(i);
-            caseNode.codegen(env, exprInstr, i);
+            caseNode.codegen(env, exprInstr, exit, i);
 
         }
 

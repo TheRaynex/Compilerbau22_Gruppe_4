@@ -24,7 +24,7 @@ public class ASTCaseStmtNode extends ASTStmtNode {
         blockStmt.execute();
     }
 
-    public void codegen(CompileEnv env, InstrIntf cond, int no) {
+    public void codegen(CompileEnv env, InstrIntf cond, compiler.InstrBlock switch_exit, int no) {
         compiler.InstrBlock exec = env.createBlock("case_exec_" + no);
         compiler.InstrBlock check = env.createBlock("case_check_" + no);
         compiler.InstrBlock exit = env.createBlock("case_exit_" + no);
@@ -43,7 +43,7 @@ public class ASTCaseStmtNode extends ASTStmtNode {
 
         env.setCurrentBlock(exec);
         blockStmt.codegen(env);
-        compiler.InstrIntf jmpToExit = new compiler.Instr.JumpInstr(exit);
+        compiler.InstrIntf jmpToExit = new compiler.Instr.JumpInstr(switch_exit);
         env.addInstr(jmpToExit);
 
         env.setCurrentBlock(exit);
