@@ -66,7 +66,8 @@ public class Parser {
 
     switchcase: SWITCH LPAREN expression RPAREN LBRACE caselist RBRACE
     caselist: case caselist
-    caselist: eps
+    caselist: eps | default
+    default: DEFAULT COLON blockStmt
     case: CASE literal COLON blockStmt
      */
     ASTStmtNode getSwitchStmt() throws Exception {
@@ -81,6 +82,10 @@ public class Parser {
         return new ASTSwitchStmtNode(caselist);
     }
 
+    /*
+    caselist: case caselist
+    caselist: eps | default
+     */
     ASTStmtNode getCaseListStmt(ASTExprNode expr) throws Exception {
         var ret = new ASTCaselistStmtNode(expr);
 
@@ -92,10 +97,25 @@ public class Parser {
                 case CASE:
                     ret.addCase(getCaseStmt());
                     break;
+                case DEFAULT:
+                    ret.addCase(getDefaultStmt());
+                    if (m_lexer.lookAhead().m_type != TokenIntf.Type.RBRACE)
+                        throw new CompilerException("DEFAULT must be the last case in switch", m_lexer.m_currentLineNumber, m_lexer.m_currentLine, "RBRACE");
+                    return ret; // switch terminates after first default statement => default must go at the end or be omitted
                 default:
-                    throw new CompilerException("unexpected token in switch statement", m_lexer.m_currentLineNumber, m_lexer.m_currentLine, "CASE or RBRACE");
+                    throw new CompilerException("unexpected token in switch statement", m_lexer.m_currentLineNumber, m_lexer.m_currentLine, "CASE, DEFAULT or RBRACE");
             }
         }
+    }
+
+    // default: DEFAULT COLON blockStmt
+    ASTCaseDefaultStmtNode getDefaultStmt() throws Exception {
+        m_lexer.expect(TokenIntf.Type.DEFAULT);
+        m_lexer.expect(TokenIntf.Type.DOUBLECOLON);
+
+        var blockStmt = getBlockStmt();
+
+        return new ASTCaseDefaultStmtNode(blockStmt);
     }
 
     //CASE literal COLON blockStmt // literal: INTEGER     right now

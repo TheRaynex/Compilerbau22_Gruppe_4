@@ -99,6 +99,7 @@ public class Lexer {
         addKeywordMachine("CALL", compiler.TokenIntf.Type.CALL);
         addKeywordMachine("RETURN", compiler.TokenIntf.Type.RETURN);
         addKeywordMachine("BLOCK", compiler.TokenIntf.Type.BLOCK);
+        addKeywordMachine("DEFAULT", compiler.TokenIntf.Type.DEFAULT);
         
         compiler.StateMachineBase identifierMachine = new StateMachineIdentifier();
         addMachine(identifierMachine);
