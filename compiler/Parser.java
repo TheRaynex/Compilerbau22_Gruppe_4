@@ -268,19 +268,23 @@ public class Parser {
         int size = statements.size();
         
         for (int i = 0; i < size; i++) {
+            ASTStmtNode statement = statements.get(i);
             if (i < size - 1) {
                 // Statement is return but not at end of block
-                if (statements.get(i) instanceof ASTReturnStmtNode) {
+                if (statement instanceof ASTReturnStmtNode) {
                     throw new Exception(
                             String.format(
                                     "Dead code due to premature return in function \"%s\".", identifier));
                 }
             } else if (i == size - 1){
                 // Last statement is also not a return statement
-                if (!(statements.get(i) instanceof ASTReturnStmtNode)) {
+                if (!(statement instanceof ASTReturnStmtNode)) {
                     throw new Exception(
                             String.format(
                                     "Return statement missing in function \"%s\".", identifier));
+                } else {
+                    // Set context function of return statement
+                    ((ASTReturnStmtNode) statement).setContext(m_funcTable.getFunction(identifier));
                 }
             }
         }
@@ -363,27 +367,6 @@ public class Parser {
             
             // Toggle expectation
             expectingIdent = !expectingIdent;
-//
-//
-//            Token token = m_lexer.lookAhead();
-//            if(token.m_type == Token.Type.IDENT) {
-//                if(prevType != Token.Type.COMMA) {
-//                    throw new Exception("Unexpected identifier");
-//                }
-//
-//                ASTVariableExprNode paramNode = (ASTVariableExprNode) getVariableExpr();
-//                String identifier = paramNode.identifier;
-//                m_symbolTable.createSymbol(identifier);
-//                result.add(identifier);
-//            } else if(token.m_type == Token.Type.COMMA) {
-//                if(prevType != Token.Type.IDENT) {
-//                    throw new Exception("Unexpected comma");
-//                }
-//
-//                m_lexer.advance();
-//            }
-//
-//            prevType = token.m_type;
         }
 
         return result;

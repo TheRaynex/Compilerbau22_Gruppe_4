@@ -53,9 +53,11 @@ public abstract class Instr {
     
     public static class ReturnInstr extends InstrIntf {
         
+        private FunctionInfo m_context;
         private InstrIntf m_result;
         
-        public ReturnInstr(InstrIntf result) {
+        public ReturnInstr(FunctionInfo context, InstrIntf result) {
+            m_context = context;
             m_result = result;
         }
 
@@ -63,12 +65,18 @@ public abstract class Instr {
             // Retrieve return value
             int value = m_result.getValue();
             
+            // Pop arguments from stack
+            for (int i = 0; i < m_context.varNames.size(); i++) {
+                env.popNumber();
+            }
+            
             // Pop values
             // TODO: Figure out how to handle this.
             // Should the values be remaining on the stack when
             // calling the function or are they meant to be popped?
             // I think, they should remain on the stack because otherwise
-            // they would be lost
+            // they would be lost when another function is called
+            
             
             // Go back to calling function
             env.popFunction();
