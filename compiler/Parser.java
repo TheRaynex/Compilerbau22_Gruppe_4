@@ -1,11 +1,8 @@
 package compiler;
 import compiler.ast.*;
 
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class Parser {
     private Lexer m_lexer;
@@ -142,6 +139,12 @@ public class Parser {
         return toResolve;
     }
     
+    ASTStmtNode getFuncCallStmt() throws Exception {
+        ASTFuncCallExprNode callNode = (ASTFuncCallExprNode) getFuncCallExpr();
+        m_lexer.expect(Token.Type.SEMICOLON);
+        return new ASTFuncCallStmtNode(callNode);
+    }
+    
     ASTExprNode getFuncCallExpr() throws Exception {
         Token keywordToken = m_lexer.lookAhead();
         if (keywordToken.m_type != Token.Type.CALL) {
@@ -201,6 +204,8 @@ public class Parser {
             return getFuncDefStmt();
         } else if (token.m_type == Token.Type.RETURN) {
             return getReturnStmt();
+        } else if (token.m_type == Token.Type.CALL) {
+            return getFuncCallStmt();
         }
         throw new Exception("Unexpected Statement");
     }
