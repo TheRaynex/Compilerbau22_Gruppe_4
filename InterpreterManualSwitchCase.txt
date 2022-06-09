@@ -76,4 +76,17 @@ out = 0;
 SWITCH(in) {
 }
 PRINT out;
+
+//SWITCH CASE Testprogramm 6:
+in = 0;
+out = 0;
+SWITCH(in) {
+  CASE 1: {
+    out = 2;
+  }
+  DEFAULT: {
+    out = 3;
+  }
+}
+PRINT out;
 }
