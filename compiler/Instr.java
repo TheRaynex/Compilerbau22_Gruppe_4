@@ -231,30 +231,6 @@ public abstract class Instr {
     		os.write("\n");
     	}
     }
-    
-    public static class WhileInstr extends InstrIntf {
-    	InstrIntf m_cond;
-    	InstrIntf m_blockStmt;
-    	
-    	public WhileInstr(InstrIntf cond, InstrIntf blockStmt) {
-    		m_cond = cond;
-    		m_blockStmt = blockStmt;
-    	}
-    	
-    	public void execute(ExecutionEnvIntf env) {
-    		while(m_cond.getValue() > 0) {
-    			m_value = m_blockStmt.getValue();
-    		}
-    	}
-    	
-    	public void trace(OutputStreamWriter os) throws Exception {
-    		os.write("WHILE ");
-    		os.write(String.valueOf(m_cond.getValue()));
-    		os.write(", ");
-    		os.write(String.valueOf(m_blockStmt.getValue()));
-    		os.write("\n");
-    	}
-    }
 
     public static class CompareLessInstr extends InstrIntf {
         private InstrIntf m_lhs;

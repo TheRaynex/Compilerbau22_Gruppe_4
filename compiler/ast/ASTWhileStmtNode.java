@@ -4,6 +4,8 @@ import java.io.OutputStreamWriter;
 
 import compiler.CompileEnv;
 import compiler.Instr;
+import compiler.InstrBlock;
+import compiler.InstrIntf;
 
 public class ASTWhileStmtNode extends ASTStmtNode {
 	
@@ -34,16 +36,27 @@ public class ASTWhileStmtNode extends ASTStmtNode {
 	@Override
 	public void codegen(CompileEnv env) {
 		 // trigger codegen for all child nodes
+		InstrBlock while_head = env.createBlock("while_head");
+		InstrBlock while_body = env.createBlock("while_body");
+		InstrBlock exit = env.createBlock("while_exit");
+		
+		InstrIntf jumpToHead = new Instr.JumpInstr(while_head); 
+		env.addInstr(jumpToHead);
+		
+		env.setCurrentBlock(while_head);
         this.exprNode.codegen(env);
-        compiler.InstrIntf instrToEval = this.exprNode.getInstr();
+        compiler.InstrIntf condition = this.exprNode.getInstr();
+        env.addInstr(condition);
+        InstrIntf jumpToBody = new Instr.JumpCondInstr(condition, while_body, exit);
+        env.addInstr(jumpToBody);
+        
+        env.setCurrentBlock(while_body);
         this.blockstmt.codegen(env);
         compiler.InstrIntf instrToExecute = this.blockstmt.getInstr();
+        env.addInstr(instrToExecute);
+        env.addInstr(jumpToHead);
         
-        // create instruction object
-        m_instr = new Instr.WhileInstr(instrToEval, instrToExecute);
-        
-        // add instruction to current code block (?)
-        env.addInstr(m_instr);
+        env.setCurrentBlock(exit);
 	}
 
 }
