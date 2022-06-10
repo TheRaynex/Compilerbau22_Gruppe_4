@@ -253,27 +253,23 @@ public class Parser {
 
 	}
 
-	// while: WHILE parentheseExpr blockstmt
+	// while: WHILE LPAREN expression RPAREN blockstmt
 	ASTStmtNode getWhileStatement() throws Exception {
 		m_lexer.expect(TokenIntf.Type.WHILE);
 		m_lexer.expect(TokenIntf.Type.LPAREN);
-		var exprNode = getParantheseExpr();
+		var exprNode = getExpr();
 		m_lexer.expect(TokenIntf.Type.RPAREN);
-		m_lexer.expect(TokenIntf.Type.LBRACE);
 		var blockstmt = getBlockStmt();
-		m_lexer.expect(TokenIntf.Type.RBRACE);
 		return new ASTWhileStmtNode(exprNode, blockstmt);
 	}
 
-	// while: DO blockstmt WHILE parentheseExpr
+	// while: DO blockstmt WHILE LPAREN expression RPAREN
 	ASTStmtNode getDoWhileStatement() throws Exception {
 		m_lexer.expect(TokenIntf.Type.DO);
-		m_lexer.expect(TokenIntf.Type.LBRACE);
 		var blockstmt = getBlockStmt();
-		m_lexer.expect(TokenIntf.Type.RBRACE);
 		m_lexer.expect(TokenIntf.Type.WHILE);
 		m_lexer.expect(TokenIntf.Type.LPAREN);
-		var exprNode = getParantheseExpr();
+		var exprNode = getExpr();
 		m_lexer.expect(TokenIntf.Type.RPAREN);
 		m_lexer.expect(TokenIntf.Type.SEMICOLON);
 		return new ASTDoWhileStmtNode(exprNode, blockstmt);
