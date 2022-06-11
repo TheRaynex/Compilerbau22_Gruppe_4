@@ -32,7 +32,7 @@ public class Parser {
     }
 
     ASTExprNode getExpr() throws Exception {
-        return getFuncCallExpr();
+        return getQuestionMarkExpr();
     }
 
     ASTExprNode getParantheseExpr() throws Exception {
@@ -47,7 +47,7 @@ public class Parser {
             m_lexer.advance();
             return new ASTIntegerLiteralNode(curToken.m_value);
         } else {
-            return getVariableExpr();
+            return getFuncCallExpr();
         }
     }
 
@@ -226,13 +226,12 @@ public class Parser {
     }
     
     ASTExprNode getFuncCallExpr() throws Exception {
+        // CALL keyword is not necessarily needed
         Token keywordToken = m_lexer.lookAhead();
-        if (keywordToken.m_type != Token.Type.CALL) {
-            return getQuestionMarkExpr();
+        if (keywordToken.m_type == Token.Type.CALL) {
+            // Skip keyword, just syntactic sugar
+            m_lexer.advance();
         }
-        
-        // Skip CALL keyword
-        m_lexer.advance();
         
         // Check if next token is identifier
         Token identifierToken = m_lexer.lookAhead();
@@ -243,7 +242,12 @@ public class Parser {
         m_lexer.advance();
         
         // Read argument list
-        m_lexer.expect(Token.Type.LPAREN);
+        Token lParenToken = m_lexer.lookAhead();
+        if (lParenToken.m_type != Token.Type.LPAREN) {
+            return new ASTVariableExprNode(identifier, getSymbolTable());
+        }
+        
+        m_lexer.advance();
         List<ASTExprNode> params = getArgList();
         m_lexer.expect(Token.Type.RPAREN);
         
