@@ -57,10 +57,83 @@ public class Parser {
 
         if (token == TokenIntf.Type.MINUS || token == TokenIntf.Type.NOT) {
             m_lexer.advance();
+            var parenExpr = getParantheseExpr();
+            return new ASTUnaryExprNode(parenExpr, token);
         }
+        
+        return getParantheseExpr();
+    }
 
-        var parenExpr = getParantheseExpr();
-        return new ASTUnaryExprNode(parenExpr, token);
+    /*
+    Franziska Ommer, Leon Neumann, Dominik Ochs, Philipp Reichert
+
+    switchcase: SWITCH LPAREN expression RPAREN LBRACE caselist RBRACE
+    caselist: case caselist
+    caselist: eps | default
+    default: DEFAULT COLON blockStmt
+    case: CASE literal COLON blockStmt
+     */
+    ASTStmtNode getSwitchStmt() throws Exception {
+        m_lexer.expect(TokenIntf.Type.SWITCH);
+        m_lexer.expect(TokenIntf.Type.LPAREN);
+        var expr = getExpr();
+        m_lexer.expect(TokenIntf.Type.RPAREN);
+        m_lexer.expect(TokenIntf.Type.LBRACE);
+        var caselist = getCaseListStmt(expr);
+        m_lexer.expect(TokenIntf.Type.RBRACE);
+
+        return new ASTSwitchStmtNode(caselist);
+    }
+
+    /*
+    caselist: case caselist
+    caselist: eps | default
+     */
+    ASTStmtNode getCaseListStmt(ASTExprNode expr) throws Exception {
+        var ret = new ASTCaselistStmtNode(expr);
+
+        while (true) {
+            var next = m_lexer.lookAhead().m_type;
+            switch (next) {
+                case RBRACE:
+                    return ret;
+                case CASE:
+                    ret.addCase(getCaseStmt());
+                    break;
+                case DEFAULT:
+                    ret.addCase(getDefaultStmt());
+                    if (m_lexer.lookAhead().m_type != TokenIntf.Type.RBRACE)
+                        throw new CompilerException("DEFAULT must be the last case in switch", m_lexer.m_currentLineNumber, m_lexer.m_currentLine, "RBRACE");
+                    return ret; // switch terminates after first default statement => default must go at the end or be omitted
+                default:
+                    throw new CompilerException("unexpected token in switch statement", m_lexer.m_currentLineNumber, m_lexer.m_currentLine, "CASE, DEFAULT or RBRACE");
+            }
+        }
+    }
+
+    // default: DEFAULT COLON blockStmt
+    ASTCaseDefaultStmtNode getDefaultStmt() throws Exception {
+        m_lexer.expect(TokenIntf.Type.DEFAULT);
+        m_lexer.expect(TokenIntf.Type.DOUBLECOLON);
+
+        var blockStmt = getBlockStmt();
+
+        return new ASTCaseDefaultStmtNode(blockStmt);
+    }
+
+    //CASE literal COLON blockStmt // literal: INTEGER     right now
+    ASTCaseStmtNode getCaseStmt() throws Exception {
+        m_lexer.expect(TokenIntf.Type.CASE);
+
+        // for now only integer implementation because expression evaluates to integer
+        var caseLiteral = m_lexer.lookAhead();
+        m_lexer.expect(TokenIntf.Type.INTEGER);
+
+        m_lexer.expect(TokenIntf.Type.DOUBLECOLON);
+
+        var blockStmt = getBlockStmt();
+
+        return new ASTCaseStmtNode(caseLiteral, blockStmt);
     }
 
     ASTExprNode getMulDivExpr() throws Exception {
@@ -102,7 +175,14 @@ public class Parser {
     }
 
     ASTExprNode getShiftExpr() throws Exception {
-        return getBitAndOrExpr();
+        ASTExprNode result = getBitAndOrExpr();
+        Token nextToken = m_lexer.lookAhead();
+        while(nextToken.m_type == Token.Type.SHIFTLEFT || nextToken.m_type == Token.Type.SHIFTRIGHT){
+            m_lexer.advance();
+            result = new ASTShiftExprNode(result, getBitAndOrExpr(), nextToken.m_type);
+            nextToken = m_lexer.lookAhead();
+        }
+        return result;
     }
 
     ASTExprNode getCompareExpr() throws Exception {
@@ -183,7 +263,15 @@ public class Parser {
 
         return result;
     }
-
+    
+    // block : BLOCK blockstmt
+    ASTStmtNode getBlock() throws Exception {
+        m_lexer.expect(Token.Type.BLOCK);
+        ASTStmtNode content = getBlockStmt();
+        ASTBlockNode result = new ASTBlockNode(content);
+        return result;
+    }
+    
     // stmt: declareStmt
     // stmt: assignStmt
     // stmt: printStmt
@@ -206,6 +294,12 @@ public class Parser {
             return getReturnStmt();
         } else if (token.m_type == Token.Type.CALL) {
             return getFuncCallStmt();
+        } else if (token.m_type == Token.Type.BLOCK) {
+            return getBlock();
+        } else if (token.m_type == Token.Type.SWITCH) {
+            return getSwitchStmt();
+        } else if (token.m_type == Token.Type.IF){
+            return getIfStmt();
         }
         throw new Exception("Unexpected Statement");
     }
@@ -371,7 +465,37 @@ public class Parser {
             expectingIdent = !expectingIdent;
         }
 
+    //ifstmt: IF LPAREN condition RPAREN blockstmt elsestmthead
+    //condition: expr
+    ASTStmtNode getIfStmt() throws Exception {
+        m_lexer.expect(TokenIntf.Type.IF);
+        m_lexer.expect(TokenIntf.Type.LPAREN);
+        ASTExprNode condition = getExpr();
+        m_lexer.expect(TokenIntf.Type.RPAREN);
+        ASTStmtNode blockstmt = getBlockStmt();
+        ASTStmtNode elseblock = getElseStmtHead();
+        return new ASTIfNode(condition, blockstmt, elseblock);
+    }
+
+    //elsestmthead: ELSE elsebody | EPSILON
+    ASTStmtNode getElseStmtHead() throws Exception {
+        Token token = m_lexer.lookAhead();
+        ASTStmtNode result = null;
+        if (token.m_type == TokenIntf.Type.ELSE) {
+            m_lexer.advance();
+            result = getElseBody();
+        }
         return result;
     }
 
+    //elsebody: ifstmt
+    //elsebody: blockstmt
+    ASTStmtNode getElseBody() throws Exception {
+        Token token = m_lexer.lookAhead();
+        if (token.m_type == TokenIntf.Type.IF){
+            return getIfStmt();
+        } else {
+            return new ASTElseNode(getBlockStmt());
+        }
+    }
 }
