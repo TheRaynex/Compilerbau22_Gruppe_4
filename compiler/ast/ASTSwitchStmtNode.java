@@ -25,7 +25,7 @@ public class ASTSwitchStmtNode extends ASTStmtNode {
     }
 
     @Override
-    public void codegen(CompileEnv env) {
+    public void codegen(CompileEnv env) throws Exception {
         caselist.codegen(env);
     }
 }

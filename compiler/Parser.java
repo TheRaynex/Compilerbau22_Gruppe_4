@@ -464,7 +464,10 @@ public class Parser {
             // Toggle expectation
             expectingIdent = !expectingIdent;
         }
-
+        
+        return result;
+    }
+    
     //ifstmt: IF LPAREN condition RPAREN blockstmt elsestmthead
     //condition: expr
     ASTStmtNode getIfStmt() throws Exception {

@@ -26,7 +26,7 @@ public class ASTElseNode extends ASTStmtNode {
     }
 
     @Override
-    public void codegen(compiler.CompileEnv env) {
+    public void codegen(compiler.CompileEnv env) throws Exception {
         // create code blocks needed for control structure
         compiler.InstrBlock body = env.createBlock("else_body_" + m_index);
         compiler.InstrBlock exit = env.createBlock("else_exit_" + m_index);
