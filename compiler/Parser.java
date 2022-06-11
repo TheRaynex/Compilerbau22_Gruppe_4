@@ -225,6 +225,7 @@ public class Parser {
     // stmt: declareStmt
     // stmt: assignStmt
     // stmt: printStmt
+    // stmt: forStmt
     ASTStmtNode getStmt() throws Exception {
         Token token = m_lexer.lookAhead();
         if (token.m_type == Token.Type.DECLARE) {
@@ -241,6 +242,8 @@ public class Parser {
             return getSwitchStmt();
         } else if (token.m_type == Token.Type.IF){
             return getIfStmt();
+        } else if (token.m_type == Token.Type.FOR){
+            return getForStmt();
         }
         throw new Exception("Unexpected Statement");
     }
@@ -306,7 +309,6 @@ public class Parser {
         ASTStmtNode elseblock = getElseStmtHead();
         return new ASTIfNode(condition, blockstmt, elseblock);
     }
-
     //elsestmthead: ELSE elsebody | EPSILON
     ASTStmtNode getElseStmtHead() throws Exception {
         Token token = m_lexer.lookAhead();
@@ -317,7 +319,6 @@ public class Parser {
         }
         return result;
     }
-
     //elsebody: ifstmt
     //elsebody: blockstmt
     ASTStmtNode getElseBody() throws Exception {
@@ -327,5 +328,17 @@ public class Parser {
         } else {
             return new ASTElseNode(getBlockStmt());
         }
+    }
+    // forStmt: FOR LPAREN stmt expr SEMICOLON assignStmt RPAREN blockstmt
+    ASTStmtNode getForStmt() throws Exception{
+        m_lexer.expect(TokenIntf.Type.FOR);
+        m_lexer.expect(TokenIntf.Type.LPAREN);
+        ASTStmtNode preStmt = getStmt();
+        ASTExprNode condition = getExpr();
+        m_lexer.expect(TokenIntf.Type.SEMICOLON);
+        ASTStmtNode loopStmt = getStmt();
+        m_lexer.expect(TokenIntf.Type.RPAREN);
+        ASTStmtNode blockStmt = getBlockStmt();
+        return new ASTForNode(preStmt, condition, blockStmt, loopStmt);
     }
 }
