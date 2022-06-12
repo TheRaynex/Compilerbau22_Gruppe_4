@@ -52,8 +52,6 @@ public class ASTWhileStmtNode extends ASTStmtNode {
 
 		env.setCurrentBlock(while_body);
 		this.blockstmt.codegen(env);
-		compiler.InstrIntf instrToExecute = this.blockstmt.getInstr();
-		env.addInstr(instrToExecute);
 		env.addInstr(jumpToHead);
 
 		env.setCurrentBlock(exit);

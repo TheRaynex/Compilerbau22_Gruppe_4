@@ -45,8 +45,6 @@ public class ASTDoWhileStmtNode extends ASTStmtNode {
 
 		env.setCurrentBlock(do_begin);
 		this.blockstmt.codegen(env);
-		compiler.InstrIntf instrToExecute = this.blockstmt.getInstr();
-		env.addInstr(instrToExecute);
 
 		this.exprNode.codegen(env);
 		compiler.InstrIntf condition = this.exprNode.getInstr();
