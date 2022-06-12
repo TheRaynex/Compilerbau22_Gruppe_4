@@ -5,7 +5,9 @@ import compiler.Instr;
 import compiler.InstrIntf;
 
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 public class ASTFuncCallExprNode extends ASTExprNode {
     
@@ -42,19 +44,13 @@ public class ASTFuncCallExprNode extends ASTExprNode {
             throw new Exception(String.format("Function call \"%s\" has invalid argument count.", info.m_name));
         }
         
-        List<InstrIntf> instructions = this.m_args.stream().map(arg -> {
-            // Generate code for each expression
-            try {
-                arg.codegen(env);
-        
-                // And get the instruction
-                return arg.getInstr();
-            } catch (Exception exception) {
-                exception.printStackTrace();
-            }
-            
-            return null;
-        }).toList();
+        List<InstrIntf> instructions = new ArrayList<InstrIntf>();
+        ListIterator<ASTExprNode> iter = m_args.listIterator();
+        while (iter.hasNext()) {
+            ASTExprNode arg = iter.next();
+            arg.codegen(env);
+            instructions.add(arg.getInstr());
+        }
         
         // Generate this instruction and add to environment
         m_instr = new Instr.CallInstr(info, instructions);
