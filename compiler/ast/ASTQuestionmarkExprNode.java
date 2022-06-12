@@ -33,7 +33,7 @@ public class ASTQuestionmarkExprNode extends ASTExprNode {
 	}
 	
 	@Override
-	public void codegen(CompileEnv env) {
+	public void codegen(CompileEnv env) throws Exception {
         // trigger codegen for all child nodes
         toEval.codegen(env);
         compiler.InstrIntf toEvalInstr = toEval.getInstr();

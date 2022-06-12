@@ -7,20 +7,19 @@ import java.util.List;
 
 public class ASTBlockStmtNode extends ASTStmtNode {
 
-    private List<ASTStmtNode> statements;
+    public List<ASTStmtNode> m_statements;
 
     public ASTBlockStmtNode() {
-        this.statements = new ArrayList<>();
-
+        m_statements = new ArrayList<>();
     }
 
     public void addStatement(ASTStmtNode stmtNode) {
-        this.statements.add(stmtNode);
+        m_statements.add(stmtNode);
     }
 
     @Override
     public void print(OutputStreamWriter outStream, String indent) throws Exception {
-        this.statements.forEach(node -> {
+        m_statements.forEach(node -> {
             try {
                 node.print(outStream, indent);
             } catch (Exception e){
@@ -31,12 +30,18 @@ public class ASTBlockStmtNode extends ASTStmtNode {
 
     @Override
     public void execute() {
-        this.statements.forEach(node -> node.execute());
+        m_statements.forEach(node -> node.execute());
     }
 
     @Override
     public void codegen(compiler.CompileEnv env) {
         // trigger codegen for all child nodes
-        this.statements.forEach(node -> node.codegen(env));
+        m_statements.forEach(node -> {
+            try {
+                node.codegen(env);
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
+        });
     }
 }

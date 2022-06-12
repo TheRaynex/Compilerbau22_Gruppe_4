@@ -13,7 +13,9 @@ public class ASTCaseDefaultStmtNode extends ASTCaseListElementStmtNode {
     }
 
     @Override
-    public void codegen(CompileEnv env, InstrIntf cond, InstrBlock switch_exit, int no) {
+    public void codegen
+            (CompileEnv env, InstrIntf cond, InstrBlock switch_exit, int no)
+            throws Exception {
         compiler.InstrBlock exec = env.createBlock("case_default_exec");
         compiler.InstrBlock exit = env.createBlock("case_default_exit");
 

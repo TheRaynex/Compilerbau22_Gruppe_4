@@ -44,7 +44,7 @@ public class ASTIfNode extends ASTStmtNode {
     }
 
     @Override
-    public void codegen(compiler.CompileEnv env) {
+    public void codegen(compiler.CompileEnv env) throws Exception {
         // create code blocks needed for control structure
         compiler.InstrBlock condition = env.createBlock("if_condition_" + m_index);
         compiler.InstrBlock body = env.createBlock("if_body_" + m_index);

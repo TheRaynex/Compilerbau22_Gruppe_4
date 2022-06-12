@@ -17,9 +17,16 @@ public class FunctionTable implements FunctionTableIntf {
 	 * @param body Body of the execution
 	 */
 	public void createFunction(String fctName, InstrBlock body, List<String> varList) {
-		FunctionInfo fctInfo = new FunctionInfo(fctName, body, varList);
-		m_functionMap.put(fctName, fctInfo);
+		this.createFunction(new FunctionInfo(fctName, body, varList));
 	}
+    
+    public void createFunction(String fctName, List<String> varList) {
+        this.createFunction(new FunctionInfo(fctName, varList));
+    }
+    
+    public void createFunction(FunctionInfo info) {
+        m_functionMap.put(info.m_name, info);
+    }
 
 	/**
 	 * Retrieves the function from the Hashmap (table).

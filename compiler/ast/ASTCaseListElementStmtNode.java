@@ -10,7 +10,9 @@ public abstract class ASTCaseListElementStmtNode extends ASTStmtNode {
         this.blockStmt = blockStmt;
     }
 
-    public abstract void codegen(CompileEnv env, InstrIntf cond, compiler.InstrBlock switch_exit, int no);
+    public abstract void codegen
+            (CompileEnv env, InstrIntf cond, compiler.InstrBlock switch_exit, int no)
+            throws Exception;
 
     @Override
     public void execute() {

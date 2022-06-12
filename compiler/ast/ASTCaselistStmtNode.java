@@ -36,7 +36,7 @@ public class ASTCaselistStmtNode extends ASTStmtNode {
     }
 
     @Override
-    public void codegen(CompileEnv env) {
+    public void codegen(CompileEnv env) throws Exception {
         compiler.InstrBlock exit = env.createBlock("switch_exit");
         compiler.InstrBlock body = env.createBlock("switch_body");
 
@@ -51,12 +51,10 @@ public class ASTCaselistStmtNode extends ASTStmtNode {
         for (int i = 0; i <  caseList.size(); i++) {
             var caseNode = caseList.get(i);
             caseNode.codegen(env, exprInstr, exit, i);
-
         }
 
         compiler.InstrIntf jmpToExit = new compiler.Instr.JumpInstr(exit);
         env.addInstr(jmpToExit);
-
         env.setCurrentBlock(exit);
     }
 }
