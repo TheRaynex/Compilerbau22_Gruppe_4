@@ -4,6 +4,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Stack;
 
 public class CompileEnv implements CompileEnvIntf {
     private SymbolTable m_symbolTable;
@@ -16,6 +17,7 @@ public class CompileEnv implements CompileEnvIntf {
     private ArrayList<InstrBlock> m_blockList;
     private final boolean m_trace;
     private int m_nextBlockId = 0;
+    private Stack<InstrBlock> loopStack;
 
 
     // cool kids would use a dedicated compile env config class for that...
@@ -27,6 +29,19 @@ public class CompileEnv implements CompileEnvIntf {
         m_lexer.init(input);
         m_parser = new Parser(this, m_lexer);
         m_blockList = new ArrayList<InstrBlock>();
+        loopStack = new Stack<InstrBlock>();
+    }
+    
+    public InstrBlock popLoopStack(){
+        return this.loopStack.pop();
+    }
+
+    public void pushLoopStack(InstrBlock instrBlock){
+        this.loopStack.push(instrBlock);
+    }
+
+    public InstrBlock peekLoopStack(){
+        return this.loopStack.peek();
     }
 
     public void compile() throws Exception {

@@ -261,6 +261,10 @@ public class Parser {
             return getSwitchStmt();
         } else if (token.m_type == Token.Type.IF){
             return getIfStmt();
+        } else if (token.m_type == Token.Type.LOOP){
+            return getLoopStmt();
+        } else if (token.m_type == Token.Type.BREAK){
+            return getBreakStmt();
         }
         throw new Exception("Unexpected Statement");
     }
@@ -347,5 +351,36 @@ public class Parser {
         } else {
             return new ASTElseNode(getBlockStmt());
         }
+    }
+
+    /*  
+        LOOP with BREAK
+        Lukas Holler, Norman Reimer, Marco Schmidt
+
+        ifstmt:    LOOP LBRACE stmtList RBRACE
+        stmtList:  stmt stmtList
+        stmtList:  epsilon
+    */  
+
+    ASTStmtNode getLoopStmt() throws Exception {
+        ASTLoopNode node = new ASTLoopNode();
+
+        m_lexer.expect(TokenIntf.Type.LOOP);
+        m_lexer.expect(TokenIntf.Type.LBRACE);
+
+        while (m_lexer.lookAhead().m_type != Token.Type.RBRACE) {
+            node.addStatement(getStmt());
+        }
+
+        m_lexer.expect(TokenIntf.Type.RBRACE);
+
+        return node;
+    }
+
+    ASTStmtNode getBreakStmt() throws Exception {
+
+        m_lexer.expect(TokenIntf.Type.BREAK);
+        m_lexer.expect(TokenIntf.Type.SEMICOLON);
+        return new ASTBreakNode();
     }
 }
