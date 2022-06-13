@@ -47,9 +47,7 @@ public class ASTDoWhileStmtNode extends ASTStmtNode {
 		this.blockstmt.codegen(env);
 
 		this.exprNode.codegen(env);
-		compiler.InstrIntf condition = this.exprNode.getInstr();
-		env.addInstr(condition);
-		InstrIntf jumpToBody = new Instr.JumpCondInstr(condition, do_begin, exit);
+		InstrIntf jumpToBody = new Instr.JumpCondInstr(exprNode.getInstr(), do_begin, exit);
 		env.addInstr(jumpToBody);
 
 		env.setCurrentBlock(exit);

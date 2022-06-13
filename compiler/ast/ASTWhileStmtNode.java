@@ -45,9 +45,7 @@ public class ASTWhileStmtNode extends ASTStmtNode {
 
 		env.setCurrentBlock(while_head);
 		this.exprNode.codegen(env);
-		compiler.InstrIntf condition = this.exprNode.getInstr();
-		env.addInstr(condition);
-		InstrIntf jumpToBody = new Instr.JumpCondInstr(condition, while_body, exit);
+		InstrIntf jumpToBody = new Instr.JumpCondInstr(exprNode.getInstr(), while_body, exit);
 		env.addInstr(jumpToBody);
 
 		env.setCurrentBlock(while_body);
