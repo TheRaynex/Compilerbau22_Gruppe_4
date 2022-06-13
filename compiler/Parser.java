@@ -276,6 +276,16 @@ public class Parser {
         return result;
     }
     
+    //executeNTimes : EXECUTE expression TIMES block
+    ASTStmtNode getExecuteNTimes() throws Exception{
+    	m_lexer.expect(Token.Type.EXECUTE);
+    	ASTExprNode n = getExpr();
+    	m_lexer.expect(Token.Type.TIMES);
+    	ASTStmtNode block = getBlockStmt();
+    	ASTExecuteNTimesNode result = new ASTExecuteNTimesNode(n,block);
+    	return result;
+    }
+    
     // stmt: declareStmt
     // stmt: assignStmt
     // stmt: printStmt
@@ -304,6 +314,8 @@ public class Parser {
             return getSwitchStmt();
         } else if (token.m_type == Token.Type.IF){
             return getIfStmt();
+        }else if (token.m_type == Token.Type.EXECUTE){
+            return getExecuteNTimes();
         }
         throw new Exception("Unexpected Statement");
     }
