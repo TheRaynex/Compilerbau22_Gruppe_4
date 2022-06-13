@@ -1,6 +1,24 @@
 package compiler;
-import compiler.ast.*;
 
+import compiler.ast.ASTAndOrExprNode;
+import compiler.ast.ASTAssignStmtNode;
+import compiler.ast.ASTBitAndOrExprNode;
+import compiler.ast.ASTBlockNode;
+import compiler.ast.ASTBlockStmtNode;
+import compiler.ast.ASTCompareExprNode;
+import compiler.ast.ASTDeclareNode;
+import compiler.ast.ASTDoWhileStmtNode;
+import compiler.ast.ASTExprNode;
+import compiler.ast.ASTIntegerLiteralNode;
+import compiler.ast.ASTMulDivExprNode;
+import compiler.ast.ASTParentheseExprNode;
+import compiler.ast.ASTPlusMinusExprNode;
+import compiler.ast.ASTPrintStmtNode;
+import compiler.ast.ASTQuestionmarkExprNode;
+import compiler.ast.ASTStmtNode;
+import compiler.ast.ASTUnaryExprNode;
+import compiler.ast.ASTVariableExprNode;
+import compiler.ast.ASTWhileStmtNode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,13 +72,11 @@ public class Parser {
     // unaryexpr: (NOT | MINUS) ? paranthesisexpr
     ASTExprNode getUnaryExpr() throws Exception {
         var token = m_lexer.lookAhead().m_type;
-
         if (token == TokenIntf.Type.MINUS || token == TokenIntf.Type.NOT) {
             m_lexer.advance();
             var parenExpr = getParantheseExpr();
             return new ASTUnaryExprNode(parenExpr, token);
         }
-        
         return getParantheseExpr();
     }
 
@@ -157,7 +173,6 @@ public class Parser {
         }
         return result;
     }
-
     ASTExprNode getBitAndOrExpr() throws Exception {
         ASTExprNode result = getPlusMinusExpr();
         Token nextToken = m_lexer.lookAhead();
@@ -173,7 +188,6 @@ public class Parser {
         }
         return result;
     }
-
     ASTExprNode getShiftExpr() throws Exception {
         ASTExprNode result = getBitAndOrExpr();
         Token nextToken = m_lexer.lookAhead();
@@ -184,7 +198,6 @@ public class Parser {
         }
         return result;
     }
-
     ASTExprNode getCompareExpr() throws Exception {
         ASTExprNode result = getShiftExpr();
         Token nextToken = m_lexer.lookAhead();
@@ -195,7 +208,6 @@ public class Parser {
         }
         return result;
     }
-
     ASTExprNode getAndOrExpr() throws Exception {
         ASTExprNode result = getCompareExpr();
         Token nextToken = m_lexer.lookAhead();
@@ -206,7 +218,6 @@ public class Parser {
         }
         return result;
     }
-
     ASTExprNode getQuestionMarkExpr() throws Exception {
         ASTExprNode toResolve = getAndOrExpr();
         while (m_lexer.lookAhead().m_type == Token.Type.QUESTIONMARK) {
@@ -264,7 +275,6 @@ public class Parser {
             result.addStatement(getStmt());
         }
         m_lexer.expect(Token.Type.RBRACE);
-
         return result;
     }
     
@@ -310,6 +320,11 @@ public class Parser {
             return getFuncCallStmt();
         } else if (token.m_type == Token.Type.BLOCK) {
             return getBlock();
+        } else if (token.m_type == Token.Type.WHILE) {
+			return getWhileStatement();
+		} else if (token.m_type == Token.Type.DO) {
+			return getDoWhileStatement();
+		}
         } else if (token.m_type == Token.Type.SWITCH) {
             return getSwitchStmt();
         } else if (token.m_type == Token.Type.IF){
@@ -319,25 +334,19 @@ public class Parser {
         }
         throw new Exception("Unexpected Statement");
     }
-
     // declareStmt: DECLARE IDENTIFIER SEMICOLON
     ASTStmtNode getDeclareStmt() throws Exception {
         m_lexer.expect(TokenIntf.Type.DECLARE);
-
         Token identifier = m_lexer.lookAhead();
         m_lexer.expect(TokenIntf.Type.IDENT);
-
         m_lexer.expect(TokenIntf.Type.SEMICOLON);
-
         if(m_symbolTable.getSymbol(identifier.m_value) != null) {
             throw new Exception("Das Symbol \"" + identifier.m_value + "\" ist bereits vergeben!\n");
         }
-
         m_symbolTable.createSymbol(identifier.m_value);
 
         return new ASTDeclareNode(m_symbolTable, identifier.m_value);
     }
-
     // assignStmt: IDENTIFER ASSIGN expr SEMICOLON
     ASTStmtNode getAssignStmt() throws Exception {
         Token nextToken = m_lexer.lookAhead();
@@ -350,7 +359,6 @@ public class Parser {
         m_lexer.expect(TokenIntf.Type.SEMICOLON);
         return stmtNode;
     }
-
     // printStmt: PRINT expr SEMICOLON
     ASTStmtNode getPrintStmt() throws Exception {
         m_lexer.expect(TokenIntf.Type.PRINT);
@@ -358,7 +366,6 @@ public class Parser {
         m_lexer.expect(TokenIntf.Type.SEMICOLON);
         return new ASTPrintStmtNode(node);
     }
-
     // variableExpr: IDENTIFIER
     ASTExprNode getVariableExpr() throws Exception {
         Token token = m_lexer.lookAhead();
@@ -369,6 +376,27 @@ public class Parser {
         throw new Exception("Unexpected Statement");
 
     }
+ // while: WHILE LPAREN expression RPAREN blockstmt
+ 	ASTStmtNode getWhileStatement() throws Exception {
+ 		m_lexer.expect(TokenIntf.Type.WHILE);
+ 		m_lexer.expect(TokenIntf.Type.LPAREN);
+ 		var exprNode = getExpr();
+ 		m_lexer.expect(TokenIntf.Type.RPAREN);
+ 		var blockstmt = getBlockStmt();
+ 		return new ASTWhileStmtNode(exprNode, blockstmt);
+ 	}
+
+ 	// while: DO blockstmt WHILE LPAREN expression RPAREN
+ 	ASTStmtNode getDoWhileStatement() throws Exception {
+ 		m_lexer.expect(TokenIntf.Type.DO);
+ 		var blockstmt = getBlockStmt();
+ 		m_lexer.expect(TokenIntf.Type.WHILE);
+ 		m_lexer.expect(TokenIntf.Type.LPAREN);
+ 		var exprNode = getExpr();
+ 		m_lexer.expect(TokenIntf.Type.RPAREN);
+ 		m_lexer.expect(TokenIntf.Type.SEMICOLON);
+ 		return new ASTDoWhileStmtNode(exprNode, blockstmt);
+ 	}
     
     ASTStmtNode getReturnStmt() throws Exception {
         m_lexer.expect(Token.Type.RETURN);
@@ -496,6 +524,7 @@ public class Parser {
         return new ASTIfNode(condition, blockstmt, elseblock);
     }
 
+} 
     //elsestmthead: ELSE elsebody | EPSILON
     ASTStmtNode getElseStmtHead() throws Exception {
         Token token = m_lexer.lookAhead();
