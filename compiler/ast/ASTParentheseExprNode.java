@@ -25,7 +25,7 @@ public class ASTParentheseExprNode extends ASTExprNode {
         return inner.eval();
     }
 
-    public void codegen(compiler.CompileEnv env) {
+    public void codegen(compiler.CompileEnv env) throws Exception {
         // trigger codegen for all child nodes
         inner.codegen(env);
         m_instr = inner.m_instr;

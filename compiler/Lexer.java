@@ -80,6 +80,7 @@ public class Lexer {
         compiler.StateMachineBase whitespaceMachine = new StateMachineWhitespaces();
         addMachine(whitespaceMachine);
         addKeywordMachine(";", compiler.TokenIntf.Type.SEMICOLON);
+        addKeywordMachine(",", compiler.TokenIntf.Type.COMMA);
         addKeywordMachine("=", compiler.TokenIntf.Type.ASSIGN);
 
         addKeywordMachine("DECLARE", compiler.TokenIntf.Type.DECLARE);
@@ -99,6 +100,7 @@ public class Lexer {
         addKeywordMachine("CALL", compiler.TokenIntf.Type.CALL);
         addKeywordMachine("RETURN", compiler.TokenIntf.Type.RETURN);
         addKeywordMachine("BLOCK", compiler.TokenIntf.Type.BLOCK);
+        addKeywordMachine("DEFAULT", compiler.TokenIntf.Type.DEFAULT);
         
         compiler.StateMachineBase identifierMachine = new StateMachineIdentifier();
         addMachine(identifierMachine);

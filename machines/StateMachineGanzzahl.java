@@ -10,7 +10,6 @@ public class StateMachineGanzzahl extends StateMachine {
 		compiler.State start = new compiler.State("start");
 		compiler.State end = new compiler.State("end");
 		start.addTransition('0', "end");
-		start.addTransition('-', "negative");
 		compiler.State numberZeroToNine = new compiler.State("numberZeroToNine");
 		compiler.State negative = new compiler.State("negative");
 

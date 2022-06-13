@@ -8,14 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ASTCaselistStmtNode extends ASTStmtNode {
-    private final List<ASTCaseStmtNode> caseList = new ArrayList<>();
+    private final List<ASTCaseListElementStmtNode> caseList = new ArrayList<>();
     private final ASTExprNode expr;
 
     public ASTCaselistStmtNode(ASTExprNode expr) {
         this.expr = expr;
     }
 
-    public void addCase(ASTCaseStmtNode c) {
+    public void addCase(ASTCaseListElementStmtNode c) {
         caseList.add(c);
     }
 
@@ -30,13 +30,13 @@ public class ASTCaselistStmtNode extends ASTStmtNode {
     @Override
     public void execute() {
         var value = expr.eval();
-        for (ASTCaseStmtNode caseNode : caseList) {
+        for (ASTCaseListElementStmtNode caseNode : caseList) {
             caseNode.execute(value);
         }
     }
 
     @Override
-    public void codegen(CompileEnv env) {
+    public void codegen(CompileEnv env) throws Exception {
         compiler.InstrBlock exit = env.createBlock("switch_exit");
         compiler.InstrBlock body = env.createBlock("switch_body");
 
@@ -49,14 +49,12 @@ public class ASTCaselistStmtNode extends ASTStmtNode {
         var exprInstr = expr.getInstr();
 
         for (int i = 0; i <  caseList.size(); i++) {
-            ASTCaseStmtNode caseNode = caseList.get(i);
-            caseNode.codegen(env, exprInstr, i);
-
+            var caseNode = caseList.get(i);
+            caseNode.codegen(env, exprInstr, exit, i);
         }
 
         compiler.InstrIntf jmpToExit = new compiler.Instr.JumpInstr(exit);
         env.addInstr(jmpToExit);
-
         env.setCurrentBlock(exit);
     }
 }

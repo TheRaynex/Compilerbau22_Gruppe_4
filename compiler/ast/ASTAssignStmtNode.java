@@ -29,7 +29,7 @@ public class ASTAssignStmtNode extends ASTStmtNode {
     }
 
     @Override
-    public void codegen(compiler.CompileEnv env) {
+    public void codegen(compiler.CompileEnv env) throws Exception {
         // trigger codegen for all child nodes
         this.exprNode.codegen(env);
         compiler.InstrIntf instrToEval = this.exprNode.getInstr();

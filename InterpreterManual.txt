@@ -1,3 +1,8 @@
 {
-  PRINT 2 * (3+4);
+  FUNCTION f(a,b) {
+    PRINT a + b;
+    RETURN 1;
+  }
+  CALL f(1, 2);
+  CALL f(3, f(2, 4));
 }
