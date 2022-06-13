@@ -1,11 +1,11 @@
 package compiler.ast;
 
+import java.io.OutputStreamWriter;
+
 import compiler.Instr;
 import compiler.InstrBlock;
 import compiler.InstrIntf;
 import compiler.Symbol;
-
-import java.io.OutputStreamWriter;
 
 public class ASTExecuteNTimesNode extends ASTStmtNode {
 	ASTExprNode m_n;
@@ -37,7 +37,7 @@ public class ASTExecuteNTimesNode extends ASTStmtNode {
 	}
 	
     @Override
-    public void codegen(compiler.CompileEnv env) {
+    public void codegen(compiler.CompileEnv env) throws Exception {
 
         int thisIndex = m_index;
         m_index++;
