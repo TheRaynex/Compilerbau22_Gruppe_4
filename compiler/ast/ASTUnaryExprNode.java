@@ -42,7 +42,7 @@ public class ASTUnaryExprNode extends ASTExprNode {
     }
 
     @Override
-    public void codegen(compiler.CompileEnv env) {
+    public void codegen(compiler.CompileEnv env) throws Exception {
         // trigger codegen for all child nodes
         parenthesisExpr.codegen(env);
         compiler.InstrIntf operand = parenthesisExpr.getInstr();
@@ -54,7 +54,10 @@ public class ASTUnaryExprNode extends ASTExprNode {
                 m_instr = new Instr.NotInstr(operand); break;
             case MINUS:
                 m_instr = new Instr.MinusInstr(operand); break;
-            default: m_instr = operand; break;
+            default: {
+                m_instr = operand;
+                return;
+            }
         }
 
         // add instruction to current code block

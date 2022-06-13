@@ -1,0 +1,49 @@
+//IF ELSE Testprogramm 1:
+{
+DECLARE in;
+DECLARE out;
+in = 1;
+out = 0;
+IF (in) {
+	out = 1;
+}
+PRINT out;
+
+//IF ELSE Testprogramm 2:
+in = 0;
+out = 0;
+IF (in) {
+	out = 1;
+} ELSE {
+    out = 2;
+}
+PRINT out;
+
+//IF ELSE Testprogramm 3:
+DECLARE in0;
+DECLARE in1;
+in0 = 0;
+in1 = 1;
+out = 0;
+IF (in0) {
+	out = 1;
+} ELSE IF (in1) {
+    out = 2;
+} ELSE {
+    out = 3;
+}
+PRINT out;
+
+//IF ELSE Testprogramm 4:
+in0 = 0;
+in1 = 0;
+out = 0;
+IF (in0) {
+	out = 1;
+} ELSE IF (in1) {
+    out = 2;
+} ELSE {
+    out = 3;
+}
+PRINT out;
+}

@@ -1,6 +1,9 @@
 package compiler;
 
+import compiler.ast.Tuple;
+
 import java.io.OutputStreamWriter;
+import java.util.List;
 
 public abstract class Instr {
 
@@ -24,6 +27,62 @@ public abstract class Instr {
 
         public void trace(OutputStreamWriter os) throws Exception {
             os.write("PRINT\n");
+        }
+    }
+    
+    public static class CallInstr extends InstrIntf {
+
+        private FunctionInfo m_context;
+        private List<InstrIntf> m_args;
+
+        public CallInstr(FunctionInfo context, List<InstrIntf> args) {
+            m_context = context;
+            m_args = args;
+        }
+
+        public void execute(ExecutionEnvIntf env) {
+            // Put calling function on stack and
+            // activate called function
+            env.pushFunction(m_context, m_args);
+        }
+
+        public void trace(OutputStreamWriter os) throws Exception {
+            os.write(String.format("CALL %s\n", m_context.m_name));
+        }
+    }
+    
+    public static class ReturnInstr extends InstrIntf {
+        
+        private InstrIntf m_result;
+        
+        public ReturnInstr(InstrIntf result) {
+            m_result = result;
+        }
+
+        public void execute(ExecutionEnvIntf env) {
+            // Retrieve return value
+            int value = m_result.getValue();
+            
+            // Go back to calling function
+            env.popFunction();
+            
+            // Assign return value to instruction:
+            // The previous element must be read, because the
+            // iterator points after the call instruction.
+            // It previously has been read using next(), after
+            // which the iterator (now pointing after it) has
+            // been put onto the stack as a return address.
+            InstrIntf call = env.getInstrIter().previous();
+            call.m_value = value;
+            
+            // After assigning the value, the old iterator
+            // state must be restored, so that the instruction
+            // following the call is executed next.
+            env.getInstrIter().next();
+        }
+
+        public void trace(OutputStreamWriter os) throws Exception {
+            os.write("RETURN\n");
         }
     }
 
@@ -108,7 +167,7 @@ public abstract class Instr {
         }
 
         public void trace(OutputStreamWriter os) throws Exception {
-            os.write("LITERAL\n");
+            os.write(String.format("INTEGER %s\n", m_value));
         }
     }
 
@@ -284,21 +343,29 @@ public abstract class Instr {
         }
     }
 
-
-
     public static class VarAccessInstr extends InstrIntf {
-        String m_identifier;
+        private String m_identifier;
 
         public VarAccessInstr(String identifier) {
             m_identifier = identifier;
         }
 
         public void execute(ExecutionEnvIntf env) {
+            // Get value from argument, if any identifier
+            // exists for the current function
+            for (Tuple<String, Integer> arg : env.getCurrentArgs()) {
+                if (arg._1.equals(m_identifier)) {
+                    m_value = arg._2;
+                    return;
+                }
+            }
+    
+            // No argument has been found, so take global value
             m_value = env.getSymbol(m_identifier).m_number;
         }
 
         public void trace(OutputStreamWriter os) throws Exception {
-            os.write("VARIABLE\n");
+            os.write(String.format("VARIABLE %s\n", m_identifier));
         }
     }
 
@@ -352,5 +419,74 @@ public abstract class Instr {
         }
     }
 
+    public static class MulInstr extends InstrIntf {
+        private InstrIntf m_lhs;
+        private InstrIntf m_rhs;
 
+        public MulInstr(InstrIntf lhs, InstrIntf rhs) {
+            m_lhs = lhs;
+            m_rhs = rhs;
+        }
+
+        public void execute(ExecutionEnvIntf env) {
+            m_value = m_lhs.getValue() * m_rhs.getValue();
+        }
+
+        public void trace(OutputStreamWriter os) throws Exception {
+            os.write("MUL\n");
+        }
+    }
+    public static class DivInstr extends InstrIntf {
+        private InstrIntf m_lhs;
+        private InstrIntf m_rhs;
+
+        public DivInstr(InstrIntf lhs, InstrIntf rhs) {
+            m_lhs = lhs;
+            m_rhs = rhs;
+        }
+
+        public void execute(ExecutionEnvIntf env) {
+            m_value = m_lhs.getValue() / m_rhs.getValue();
+        }
+
+        public void trace(OutputStreamWriter os) throws Exception {
+            os.write("DIV\n");
+        }
+    }
+
+    public static class ShiftLeftInstr extends InstrIntf {
+        private InstrIntf m_lhs;
+        private InstrIntf m_rhs;
+
+        public ShiftLeftInstr(InstrIntf lhs, InstrIntf rhs) {
+            m_lhs = lhs;
+            m_rhs = rhs;                   
+        }
+
+        public void execute(ExecutionEnvIntf env) {
+            m_value = m_lhs.getValue() << m_rhs.getValue();
+        }
+
+        public void trace(OutputStreamWriter os) throws Exception {
+            os.write("SHIFTLEFT\n");
+        }
+    }
+
+    public static class ShiftRightInstr extends InstrIntf {
+        private InstrIntf m_lhs;
+        private InstrIntf m_rhs;
+
+        public ShiftRightInstr(InstrIntf lhs, InstrIntf rhs) {
+            m_lhs = lhs;
+            m_rhs = rhs;                   
+        }
+
+        public void execute(ExecutionEnvIntf env) {
+            m_value = m_lhs.getValue() >> m_rhs.getValue();
+        }
+
+        public void trace(OutputStreamWriter os) throws Exception {
+            os.write("SHIFTRIGHT\n");
+        }
+    }
 }

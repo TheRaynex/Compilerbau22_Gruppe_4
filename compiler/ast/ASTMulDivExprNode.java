@@ -36,4 +36,25 @@ public class ASTMulDivExprNode extends ASTExprNode {
         }
     }
 
+    @Override
+    public void codegen(compiler.CompileEnv env) throws Exception {
+        // trigger codegen for all child nodes
+        m_lhs.codegen(env);
+        compiler.InstrIntf lhs = m_lhs.getInstr();
+        m_rhs.codegen(env);
+        compiler.InstrIntf rhs = m_rhs.getInstr();
+
+        // create instruction object
+        // pass instruction objects of childs  // as input arguments
+        if (m_type == compiler.Token.Type.MUL) {
+            // store instruction in this AST node
+            m_instr = new compiler.Instr.MulInstr(lhs, rhs);
+        } else {
+            // store instruction in this AST node
+            m_instr = new compiler.Instr.DivInstr(lhs, rhs);            
+        }
+
+        // add instruction to current code block
+        env.addInstr(m_instr);
+    }
 }

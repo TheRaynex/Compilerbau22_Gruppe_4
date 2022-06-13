@@ -2,20 +2,19 @@ package compiler.ast;
 
 import java.io.OutputStreamWriter;
 
-import compiler.Instr.SubInstr;
+public class ASTElseNode extends ASTStmtNode {
 
-public class ASTBlockNode extends ASTStmtNode {
     private final ASTStmtNode m_content;
     private static int m_index = 0;
 
-    public ASTBlockNode(ASTStmtNode content) {
-        this.m_content = content;
+    public ASTElseNode(ASTStmtNode m_content) {
+        this.m_content = m_content;
     }
 
     @Override
     public void print(OutputStreamWriter outStream, String indent) throws Exception {
         outStream.append(indent);
-        outStream.append("BLOCK\n");
+        outStream.append("ELSE\n");
 
         String childIndent = indent + "  ";
         m_content.print(outStream, childIndent);
@@ -29,8 +28,8 @@ public class ASTBlockNode extends ASTStmtNode {
     @Override
     public void codegen(compiler.CompileEnv env) throws Exception {
         // create code blocks needed for control structure
-        compiler.InstrBlock body = env.createBlock("block_body_" + m_index);
-        compiler.InstrBlock exit = env.createBlock("block_exit_" + m_index);
+        compiler.InstrBlock body = env.createBlock("else_body_" + m_index);
+        compiler.InstrBlock exit = env.createBlock("else_exit_" + m_index);
         m_index++;
         // current block of CompileEnv is our entry block
         // terminate entry block with jump/conditional jump

@@ -32,6 +32,7 @@ public abstract class TokenIntf {
 		MULTILINECOMMENT,
 		WHITESPACE,
 		SEMICOLON,
+		COMMA,
 		DECLARE,
 		ASSIGN,
 		PRINT,
@@ -50,6 +51,7 @@ public abstract class TokenIntf {
         CALL,
         RETURN,
         BLOCK,
+		DEFAULT,
 	}
 
 	public Type m_type;

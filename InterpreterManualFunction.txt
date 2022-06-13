@@ -1,0 +1,35 @@
+{
+// FUNCTION Testprogramm 1
+FUNCTION myFct1() {
+  RETURN 1;
+}
+PRINT CALL myFct1();
+
+// FUNCTION Testprogramm 2
+FUNCTION myFct2(a, b) {
+  RETURN a + b;
+}
+PRINT CALL myFct2(1, 2);
+
+// FUNCTION Testprogramm 3
+FUNCTION myFct3_1(a, b) {
+  DECLARE c;
+  c = a + 2 * b;
+  RETURN c;
+}
+FUNCTION myFct3_2(a) {
+  RETURN a + 1;
+}
+DECLARE d;
+d = CALL myFct3_1(1, 2) + CALL myFct3_2(3);
+PRINT d;
+
+// FUNCTION Testprogramm 4
+FUNCTION myFct4_1(a, b) {
+  RETURN a * b;
+}
+FUNCTION myFct4_2(a) {
+  RETURN myFct4_1(a, a + 1);
+}
+PRINT myFct4_2(5);
+}
