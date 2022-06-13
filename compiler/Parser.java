@@ -495,6 +495,11 @@ public class Parser {
             expectingExpr = !expectingExpr;
         }
 
+        // Throw error if arg list ended with comma instead of expression
+        if(expectingExpr) {
+            throw new Exception("Argument list must not end with a comma, but an expression.");
+        }
+
         return result;
     }
     
@@ -518,6 +523,11 @@ public class Parser {
             
             // Toggle expectation
             expectingIdent = !expectingIdent;
+        }
+
+        // Throw error if param list ended with comma instead of identifier
+        if(expectingIdent) {
+            throw new Exception("Parameter list must not end with a comma, but an identifier.");
         }
         
         return result;
