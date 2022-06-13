@@ -51,13 +51,13 @@ public class ASTExecuteNTimesNode extends ASTStmtNode {
         // terminate entry block with jump/conditional jump
         // into block of control structure
 
-        Symbol symbol = env.getSymbolTable().createSymbol("i_" + thisIndex);
+        Symbol symbol = env.getSymbolTable().createSymbol("$i_" + thisIndex);
 
         m_n.codegen(env);
         InstrIntf n = m_n.getInstr();
 
 
-        InstrIntf acc = new Instr.VarAccessInstr("i_" + thisIndex);
+        InstrIntf acc = new Instr.VarAccessInstr("$i_" + thisIndex);
         InstrIntf one = new Instr.IntegerLiteralInstr(1);
         InstrIntf inc = new Instr.AddInstr(acc, one);
         InstrIntf ass = new Instr.VarAssignInstr(inc, symbol);
