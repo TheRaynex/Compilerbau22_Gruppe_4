@@ -14,6 +14,7 @@ import compiler.ast.ASTDoWhileStmtNode;
 import compiler.ast.ASTElseNode;
 import compiler.ast.ASTExecuteNTimesNode;
 import compiler.ast.ASTExprNode;
+import compiler.ast.ASTForNode;
 import compiler.ast.ASTFuncCallExprNode;
 import compiler.ast.ASTFuncCallStmtNode;
 import compiler.ast.ASTFuncDefStmtNode;

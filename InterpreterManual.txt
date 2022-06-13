@@ -1,12 +1,10 @@
 {
-  DECLARE index;
-  DECLARE sum;
-  index = 0;
-  sum = 0;
-  WHILE (index < 10) {
-    sum = sum + index;
-    index = index + 1;
-  }
-  PRINT index;
-  PRINT sum;
+DECLARE index;
+DECLARE sum;
+index = 0;
+sum = 0;
+FOR(index = 10; index; index = index - 1;) {
+  sum = sum + index;
+}
+PRINT sum;
 }

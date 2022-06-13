@@ -44,7 +44,7 @@ public class ASTForNode extends ASTStmtNode {
     }
 
     @Override
-    public void codegen(compiler.CompileEnv env) {
+    public void codegen(compiler.CompileEnv env) throws Exception {
 
         compiler.InstrBlock head = env.createBlock("For_head_" + m_index);
         compiler.InstrBlock body = env.createBlock("For_body_" + m_index);
