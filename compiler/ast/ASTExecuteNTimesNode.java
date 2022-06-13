@@ -37,7 +37,7 @@ public class ASTExecuteNTimesNode extends ASTStmtNode {
 	}
 	
     @Override
-    public void codegen(compiler.CompileEnv env) {
+    public void codegen(compiler.CompileEnv env) throws Exception {
 
         int thisIndex = m_index;
         m_index++;
