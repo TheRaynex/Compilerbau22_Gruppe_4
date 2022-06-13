@@ -5,17 +5,29 @@ import compiler.ast.ASTAssignStmtNode;
 import compiler.ast.ASTBitAndOrExprNode;
 import compiler.ast.ASTBlockNode;
 import compiler.ast.ASTBlockStmtNode;
+import compiler.ast.ASTCaseDefaultStmtNode;
+import compiler.ast.ASTCaseStmtNode;
+import compiler.ast.ASTCaselistStmtNode;
 import compiler.ast.ASTCompareExprNode;
 import compiler.ast.ASTDeclareNode;
 import compiler.ast.ASTDoWhileStmtNode;
+import compiler.ast.ASTElseNode;
+import compiler.ast.ASTExecuteNTimesNode;
 import compiler.ast.ASTExprNode;
+import compiler.ast.ASTFuncCallExprNode;
+import compiler.ast.ASTFuncCallStmtNode;
+import compiler.ast.ASTFuncDefStmtNode;
+import compiler.ast.ASTIfNode;
 import compiler.ast.ASTIntegerLiteralNode;
 import compiler.ast.ASTMulDivExprNode;
 import compiler.ast.ASTParentheseExprNode;
 import compiler.ast.ASTPlusMinusExprNode;
 import compiler.ast.ASTPrintStmtNode;
 import compiler.ast.ASTQuestionmarkExprNode;
+import compiler.ast.ASTReturnStmtNode;
+import compiler.ast.ASTShiftExprNode;
 import compiler.ast.ASTStmtNode;
+import compiler.ast.ASTSwitchStmtNode;
 import compiler.ast.ASTUnaryExprNode;
 import compiler.ast.ASTVariableExprNode;
 import compiler.ast.ASTWhileStmtNode;
@@ -324,7 +336,6 @@ public class Parser {
 			return getWhileStatement();
 		} else if (token.m_type == Token.Type.DO) {
 			return getDoWhileStatement();
-		}
         } else if (token.m_type == Token.Type.SWITCH) {
             return getSwitchStmt();
         } else if (token.m_type == Token.Type.IF){
@@ -524,7 +535,6 @@ public class Parser {
         return new ASTIfNode(condition, blockstmt, elseblock);
     }
 
-} 
     //elsestmthead: ELSE elsebody | EPSILON
     ASTStmtNode getElseStmtHead() throws Exception {
         Token token = m_lexer.lookAhead();

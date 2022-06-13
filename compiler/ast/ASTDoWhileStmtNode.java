@@ -35,7 +35,7 @@ public class ASTDoWhileStmtNode extends ASTStmtNode {
 	}
 
 	@Override
-	public void codegen(CompileEnv env) {
+	public void codegen(CompileEnv env) throws Exception {
 		// trigger codegen for all child nodes
 		InstrBlock do_begin = env.createBlock("do_begin");
 		InstrBlock exit = env.createBlock("while_exit");

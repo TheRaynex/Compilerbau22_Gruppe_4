@@ -34,7 +34,7 @@ public class ASTWhileStmtNode extends ASTStmtNode {
 	}
 
 	@Override
-	public void codegen(CompileEnv env) {
+	public void codegen(CompileEnv env) throws Exception {
 		// trigger codegen for all child nodes
 		InstrBlock while_head = env.createBlock("while_head");
 		InstrBlock while_body = env.createBlock("while_body");

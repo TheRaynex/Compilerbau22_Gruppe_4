@@ -1,8 +1,12 @@
 {
-  FUNCTION f(a,b) {
-    PRINT a + b;
-    RETURN 1;
+  DECLARE index;
+  DECLARE sum;
+  index = 0;
+  sum = 0;
+  WHILE (index < 10) {
+    sum = sum + index;
+    index = index + 1;
   }
-  CALL f(1, 2);
-  CALL f(3, f(2, 4));
+  PRINT index;
+  PRINT sum;
 }
