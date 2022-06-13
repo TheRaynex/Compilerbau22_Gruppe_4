@@ -1,0 +1,36 @@
+// FOR Testprogram 1
+{
+DECLARE index;
+DECLARE sum;
+index = 0;
+sum = 0;
+FOR(index = 10; index; index = index - 1;) {
+  sum = sum + index;
+}
+PRINT sum;
+}
+
+
+// FOR Testprogram 2
+{
+DECLARE index;
+DECLARE sum;
+index = 64;
+sum = 0;
+FOR(index = index * 2; index; index = index / 2;) {
+  sum = sum + index;
+}
+PRINT sum;
+}
+
+// FOR Testprogram 3
+{
+DECLARE index;
+DECLARE sum;
+index = 10 - 20;
+sum = 0;
+FOR(PRINT index; index; index = index + 2;) {
+  sum = sum + index;
+}
+PRINT sum;
+}
