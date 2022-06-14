@@ -33,13 +33,17 @@ public class ASTAndOrExprNode extends ASTExprNode {
     @Override
     public int eval() {
         if (m_type == Token.Type.AND) {
-            if (m_lhs.eval() != 0 && m_rhs.eval() != 0) {
-                return 1;
-            } else return 0;
+            if(m_lhs.eval() == 1){
+                return m_rhs.eval();
+            }else{
+                return 0;
+            }
         } else {
-            if (m_lhs.eval() != 0 || m_rhs.eval() != 0) {
+            if(m_lhs.eval() == 1){
                 return 1;
-            } else return 0;
+            }else{
+                return m_rhs.eval();            
+            }
         }
     }
 

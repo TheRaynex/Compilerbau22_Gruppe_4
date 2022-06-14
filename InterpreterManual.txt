@@ -1,10 +1,3 @@
 {
-DECLARE index;
-DECLARE sum;
-index = 0;
-sum = 0;
-FOR(index = 10; index; index = index - 1;) {
-  sum = sum + index;
-}
-PRINT sum;
+  PRINT 0 && 1/0;
 }
