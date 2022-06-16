@@ -1,7 +1,5 @@
 package compiler.ast;
 
-import compiler.Instr;
-
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,30 +43,41 @@ public class ASTLoopNode extends ASTStmtNode {
     }
 
     @Override
-    public void codegen(compiler.CompileEnv env) {
+    public void codegen(compiler.CompileEnv env) throws Exception {
+
         // create code blocks needed for control structure
+        
         compiler.InstrBlock body = env.createBlock("loop_body_" + m_index);
         compiler.InstrBlock exit = env.createBlock("loop_exit_" + m_index);
         m_index++;
         
-        // current block of CompileEnv is our entry block
-        // terminate entry block with jump/conditional jump
-        // into block of control structure
+        // push the exit block of the loop on the loop-stack for further use
+        // loop_body is our entry block => jump
+
+        env.pushLoopStack(exit);
 
         compiler.InstrIntf jmpIntoBody = new compiler.Instr.JumpInstr(body);
         env.addInstr(jmpIntoBody);
-        env.pushLoopStack(exit);
-        // for each block of control structure
-        // switch CompileEnv to the corresponding block
-        // trigger codegen of statements that
-        // belong into this block
         env.setCurrentBlock(body);
-        for (int i = 0; i <  statements.size(); i++) {
-            statements.get(i).codegen(env);
-        }
-    
-        var jmpToExit = new compiler.Instr.JumpInstr(exit);
-        env.addInstr(jmpToExit);
+
+        // trigger codegen for statement list
+
+        statements.forEach(node -> {
+            try {
+                node.codegen(env);
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
+        });
+
+        // jump back to the body block (=> loop)
+
+        var loop = new compiler.Instr.JumpInstr(body);
+        env.addInstr(loop);
+        
+        // pop the exit-block of the loop stack (codegen done)
+        // jump to the exit block
+
         env.popLoopStack();
         env.setCurrentBlock(exit);
     }

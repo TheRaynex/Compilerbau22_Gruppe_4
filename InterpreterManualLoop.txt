@@ -1,0 +1,23 @@
+// LOOP Testprogramm 1
+{
+  DECLARE A;
+  DECLARE B;
+  A = 0;
+ 
+  LOOP {
+    A = A + 1;
+    IF (A == 10) {
+      BREAK;
+    }
+    PRINT A;
+    
+    B = 0;
+    LOOP {
+      B = B + 1;
+      IF (B == 10) {
+        BREAK;
+      }
+      PRINT B;
+    }
+  }
+}

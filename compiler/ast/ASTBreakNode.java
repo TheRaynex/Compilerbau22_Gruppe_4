@@ -1,7 +1,5 @@
 package compiler.ast;
 
-import compiler.Instr;
-
 import java.io.OutputStreamWriter;
 
 public class ASTBreakNode extends ASTStmtNode {
@@ -13,12 +11,11 @@ public class ASTBreakNode extends ASTStmtNode {
     }
 
     @Override
-    public void execute() {
-        // TODO
-    }
+    public void execute() {}
 
     @Override
     public void codegen(compiler.CompileEnv env) {
+        // add jump-instruction to the exit block of the loop to break
         compiler.InstrIntf breakInstr = new compiler.Instr.BreakInstr(env.peekLoopStack());
         env.addInstr(breakInstr);
     }
