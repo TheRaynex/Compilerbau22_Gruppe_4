@@ -1,0 +1,29 @@
+// Testprogram EXECUTE n TIMES 1
+{
+DECLARE index;
+DECLARE sum;
+sum = 0;
+index = 0;
+EXECUTE 10 TIMES {
+	sum = sum + index;
+	index = index + 1;
+}
+PRINT index;
+PRINT sum;
+
+// Testprogram EXECUTE n TIMES 2
+DECLARE innerIndex;
+sum = 0;
+index = 0;
+EXECUTE 10 TIMES {
+    innerIndex = 0;
+	EXECUTE index TIMES {
+		sum = sum + innerIndex;
+		innerIndex = innerIndex + 1;
+	}
+	index = index + 1;
+}
+PRINT index;
+PRINT innerIndex;
+PRINT sum;
+}

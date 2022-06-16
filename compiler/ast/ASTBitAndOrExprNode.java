@@ -36,7 +36,7 @@ public class ASTBitAndOrExprNode extends ASTExprNode {
     }
 
     @Override
-    public void codegen(compiler.CompileEnv env) {
+    public void codegen(compiler.CompileEnv env) throws Exception {
         // trigger codegen for all child nodes
         m_lhs.codegen(env);
         compiler.InstrIntf lhs = m_lhs.getInstr();

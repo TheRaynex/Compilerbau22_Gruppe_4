@@ -33,18 +33,22 @@ public class ASTAndOrExprNode extends ASTExprNode {
     @Override
     public int eval() {
         if (m_type == Token.Type.AND) {
-            if (m_lhs.eval() != 0 && m_rhs.eval() != 0) {
-                return 1;
-            } else return 0;
+            if(m_lhs.eval() == 1){
+                return m_rhs.eval();
+            }else{
+                return 0;
+            }
         } else {
-            if (m_lhs.eval() != 0 || m_rhs.eval() != 0) {
+            if(m_lhs.eval() == 1){
                 return 1;
-            } else return 0;
+            }else{
+                return m_rhs.eval();            
+            }
         }
     }
 
     @Override
-    public void codegen(compiler.CompileEnv env) {
+    public void codegen(compiler.CompileEnv env) throws Exception {
         // trigger codegen for all child nodes
         m_lhs.codegen(env);
         compiler.InstrIntf lhs = m_lhs.getInstr();

@@ -12,9 +12,7 @@ public class ASTIntegerLiteralNode extends ASTExprNode {
     @Override
     public void print(OutputStreamWriter outStream, String indent) throws Exception {
         outStream.write(indent);
-        outStream.write("INTEGER ");
-        outStream.write(m_value);
-        outStream.write("\n");
+        outStream.write(String.format("INTEGER %s\n", m_value));
     }
 
     @Override

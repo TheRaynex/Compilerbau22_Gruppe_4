@@ -20,7 +20,9 @@ public class ASTCaseStmtNode extends ASTCaseListElementStmtNode {
     }
 
     @Override
-    public void codegen(CompileEnv env, InstrIntf cond, compiler.InstrBlock switch_exit, int no) {
+    public void codegen
+            (CompileEnv env, InstrIntf cond, compiler.InstrBlock switch_exit, int no)
+            throws Exception {
         compiler.InstrBlock exec = env.createBlock("case_exec_" + no);
         compiler.InstrBlock check = env.createBlock("case_check_" + no);
         compiler.InstrBlock exit = env.createBlock("case_exit_" + no);
