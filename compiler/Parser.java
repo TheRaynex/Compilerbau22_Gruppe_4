@@ -5,6 +5,7 @@ import compiler.ast.ASTAssignStmtNode;
 import compiler.ast.ASTBitAndOrExprNode;
 import compiler.ast.ASTBlockNode;
 import compiler.ast.ASTBlockStmtNode;
+import compiler.ast.ASTBreakNode;
 import compiler.ast.ASTCaseDefaultStmtNode;
 import compiler.ast.ASTCaseStmtNode;
 import compiler.ast.ASTCaselistStmtNode;
@@ -20,6 +21,7 @@ import compiler.ast.ASTFuncCallStmtNode;
 import compiler.ast.ASTFuncDefStmtNode;
 import compiler.ast.ASTIfNode;
 import compiler.ast.ASTIntegerLiteralNode;
+import compiler.ast.ASTLoopNode;
 import compiler.ast.ASTMulDivExprNode;
 import compiler.ast.ASTParentheseExprNode;
 import compiler.ast.ASTPlusMinusExprNode;
@@ -342,6 +344,10 @@ public class Parser {
             return getSwitchStmt();
         } else if (token.m_type == Token.Type.IF){
             return getIfStmt();
+        } else if (token.m_type == Token.Type.LOOP){
+            return getLoopStmt();
+        } else if (token.m_type == Token.Type.BREAK){
+            return getBreakStmt();
         } else if (token.m_type == Token.Type.FOR){
             return getForStmt();
         }else if (token.m_type == Token.Type.EXECUTE){
@@ -567,6 +573,37 @@ public class Parser {
         } else {
             return new ASTElseNode(getBlockStmt());
         }
+    }
+
+    /*  
+        LOOP with BREAK
+        Lukas Holler, Norman Reimer, Marco Schmidt
+
+        ifstmt:    LOOP LBRACE stmtList RBRACE
+        stmtList:  stmt stmtList
+        stmtList:  epsilon
+    */  
+
+    ASTStmtNode getLoopStmt() throws Exception {
+        ASTLoopNode node = new ASTLoopNode();
+
+        m_lexer.expect(TokenIntf.Type.LOOP);
+        m_lexer.expect(TokenIntf.Type.LBRACE);
+
+        while (m_lexer.lookAhead().m_type != Token.Type.RBRACE) {
+            node.addStatement(getStmt());
+        }
+
+        m_lexer.expect(TokenIntf.Type.RBRACE);
+
+        return node;
+    }
+
+    ASTStmtNode getBreakStmt() throws Exception {
+
+        m_lexer.expect(TokenIntf.Type.BREAK);
+        m_lexer.expect(TokenIntf.Type.SEMICOLON);
+        return new ASTBreakNode();
     }
 
   // forStmt: FOR LPAREN stmt expr SEMICOLON assignStmt RPAREN blockstmt

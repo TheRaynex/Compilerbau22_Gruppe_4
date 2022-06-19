@@ -263,6 +263,23 @@ public abstract class Instr {
             os.write("\n");
         }
     }
+
+    public static class BreakInstr extends InstrIntf {
+        InstrBlock m_target;
+
+        public BreakInstr(InstrBlock parent_exit) {
+            m_target = parent_exit;
+        }
+
+        public void execute(ExecutionEnvIntf env) {
+            env.setInstrIter(m_target.getIterator());
+        }
+
+        public void trace(OutputStreamWriter os) throws Exception {
+            os.write("BREAK\n");
+        }
+    }
+
     public static class QuestionMarkInstr extends InstrIntf {
     	InstrIntf m_cond;
     	InstrIntf m_targetTrue;
