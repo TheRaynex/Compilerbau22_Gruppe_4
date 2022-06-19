@@ -1,0 +1,49 @@
+// LOOP Testprogramm 1
+{
+DECLARE index;
+DECLARE sum;
+index = 0;
+sum = 0;
+LOOP {
+  index = index + 1;
+  sum = sum + index;
+  BREAK;
+}
+PRINT index;
+PRINT sum;
+
+// LOOP Testprogramm 2
+index = 0;
+sum = 0;
+LOOP {
+  index = index + 1;
+  IF (index == 10) {
+    BREAK;
+  }
+  sum = sum + index;
+}
+PRINT index;
+PRINT sum;
+
+// LOOP Testprogramm 3
+DECLARE innerIndex;
+index = 0;
+sum = 0;
+LOOP {
+  index = index + 1;
+  innerIndex = 0;
+  LOOP {
+    innerIndex = innerIndex + 1;
+	IF (innerIndex == 10) {
+	  BREAK;
+	}
+	sum = sum + innerIndex;
+  }
+  IF (index == 10) {
+    BREAK;
+  }
+}
+PRINT index;
+PRINT innerIndex;
+PRINT sum;
+}
