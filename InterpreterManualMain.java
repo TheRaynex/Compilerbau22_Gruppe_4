@@ -8,7 +8,7 @@ public class InterpreterManualMain {
         String program = compiler.FileReader.fileToString(args[0]);
 		CompileEnv compiler = new CompileEnv(program, false);
 		compiler.compile();
-		compiler.dumpAst(System.out);
+		//compiler.dumpAst(System.out);
 		compiler.dump(System.out);
 		compiler.execute(System.out);
 		System.out.println("END");
